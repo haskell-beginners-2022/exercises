@@ -22,7 +22,7 @@ source-repository head
   location:            https://github.com/haskell-beginners-2022/exercises.git
 
 common common-options
-  build-depends:       base ^>= 4.14.3.0
+  build-depends:       base ^>= 4.14
 
   ghc-options:         -Wall
                        -Wcompat
@@ -62,14 +62,22 @@ common common-options
 library
   import:              common-options
   hs-source-dirs:      src
-  exposed-modules:     Exercises
+  exposed-modules:     Lecture1
+                       Lecture2
+                       Lecture3
+                       Lecture4
 
 test-suite exercises-test
   import:              common-options
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
+
+  other-modules:       Test.Lecture1
+
   build-depends:       exercises
+                     , hspec ^>= 2.9
+
   ghc-options:         -threaded
                        -rtsopts
                        -with-rtsopts=-N

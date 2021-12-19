@@ -9,5 +9,4 @@ updates:
       include: "scope"
     labels:
       - "CI"
-      - "library :books:"
-      
+      - "dependencies"

@@ -1,7 +1,10 @@
 module Main (main) where
 
-import Exercises (projectName)
+import Test.Hspec (describe, hspec, parallel)
+
+import Test.Lecture1 (lecture1Spec)
 
 
 main :: IO ()
-main = putStrLn ("Tests for " ++ projectName)
+main = hspec $ describe "Tests" $ parallel $ do
+    lecture1Spec
