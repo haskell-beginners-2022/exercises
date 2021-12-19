@@ -1,0 +1,75 @@
+cabal-version:       2.4
+name:                exercises
+version:             0.0.0.0
+synopsis:            Exercises for the Haskell Beginners 2022 course
+description:
+    Exercises for the Haskell Beginners 2022 course.
+    See [README.md](https://github.com/haskell-beginners-2022/exercises#exercises) for more details.
+homepage:            https://github.com/haskell-beginners-2022/exercises
+bug-reports:         https://github.com/haskell-beginners-2022/exercises/issues
+license:             MPL-2.0
+license-file:        LICENSE
+author:              Haskell Beginners 2022 Course
+maintainer:          Haskell Beginners 2022 Course <haskell.beginners2022@gmail.com>
+copyright:           2021 Haskell Beginners 2022 Course
+build-type:          Simple
+extra-doc-files:     README.md
+                     CHANGELOG.md
+tested-with:         GHC == 8.10.7
+
+source-repository head
+  type:                git
+  location:            https://github.com/haskell-beginners-2022/exercises.git
+
+common common-options
+  build-depends:       base ^>= 4.14.3.0
+
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-uni-patterns
+                       -Wincomplete-record-updates
+                       -Wredundant-constraints
+                       -Wnoncanonical-monad-instances
+  if impl(ghc >= 8.2)
+    ghc-options:       -fhide-source-paths
+  if impl(ghc >= 8.4)
+    ghc-options:       -Wmissing-export-lists
+                       -Wpartial-fields
+  if impl(ghc >= 8.8)
+    ghc-options:       -Wmissing-deriving-strategies
+                       -fwrite-ide-info
+                       -hiedir=.hie
+  if impl(ghc >= 8.10)
+    ghc-options:       -Wunused-packages
+
+  default-language:    Haskell2010
+  default-extensions:  ConstraintKinds
+                       DeriveGeneric
+                       DerivingStrategies
+                       GeneralizedNewtypeDeriving
+                       InstanceSigs
+                       KindSignatures
+                       LambdaCase
+                       OverloadedStrings
+                       RecordWildCards
+                       ScopedTypeVariables
+                       StandaloneDeriving
+                       TupleSections
+                       TypeApplications
+                       ViewPatterns
+
+library
+  import:              common-options
+  hs-source-dirs:      src
+  exposed-modules:     Exercises
+
+test-suite exercises-test
+  import:              common-options
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       exercises
+  ghc-options:         -threaded
+                       -rtsopts
+                       -with-rtsopts=-N
