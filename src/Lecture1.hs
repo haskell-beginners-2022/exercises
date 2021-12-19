@@ -6,10 +6,6 @@ Maintainer: Haskell Beginners 2022 Course <haskell.beginners2022@gmail.com>
 Exercises for the Haskell Beginners 2022 course
 -}
 
-module Exercises
-    ( projectName
+module Lecture1
+    (
     ) where
-
-
-projectName :: String
-projectName = "exercises"
