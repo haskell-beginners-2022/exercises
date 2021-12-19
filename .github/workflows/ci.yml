@@ -32,7 +32,7 @@ jobs:
       run: |
         cabal v2-freeze
 
-    - uses: actions/cache@v2.1.2
+    - uses: actions/cache@v2.1.7
       name: Cache ~/.cabal/store
       with:
         path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
