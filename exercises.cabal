@@ -59,6 +59,12 @@ common common-options
                        TypeApplications
                        ViewPatterns
 
+common common-doctest
+  import:              common-options
+  hs-source-dirs:      test
+  build-depends:       doctest ^>= 0.20
+  ghc-options:         -threaded
+
 library
   import:              common-options
   hs-source-dirs:      src
@@ -81,3 +87,8 @@ test-suite exercises-test
   ghc-options:         -threaded
                        -rtsopts
                        -with-rtsopts=-N
+
+test-suite doctest-lecture1
+  import:              common-doctest
+  type:                exitcode-stdio-1.0
+  main-is:             DoctestLecture1.hs
