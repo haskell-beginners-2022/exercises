@@ -53,6 +53,7 @@ jobs:
         cabal build all
 
     - name: Test
+      continue-on-error: true
       run: |
         cabal test all
 
