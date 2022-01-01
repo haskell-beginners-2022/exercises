@@ -152,6 +152,13 @@ following command:
 make test-lecture1
 ```
 
+You can also run tests only for a single function. For example, to run
+tests for the `strSum` function, execute the following command:
+
+```shell
+cabal run exercises-test --enable-tests -- -m "strSum"
+```
+
 ## Acknowledgement
 
 This course is inspired by

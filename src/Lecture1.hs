@@ -88,6 +88,11 @@ the end (including).
 
 >>> subString 10 5 "Some very long String"
 ""
+
+This function can accept negative start and end position. Negative
+start position can be considered as zero (e.g. substring from the
+first character) and negative end position should result in an empty
+string.
 -}
 subString start end str = error "TODO"
 
@@ -111,5 +116,7 @@ greated than the given number and strictly lower.
 Explanation: the list [1 .. 9] contains 9 elements: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 The given number 3 is greater than 2 elements (1 and 2)
 and lower than 6 elements (4, 5, 6, 7, 8 and 9).
+
+🕯 HINT: Use recursion to implement this function.
 -}
 lowerAndGreater n list = error "TODO"
