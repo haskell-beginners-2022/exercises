@@ -9,7 +9,7 @@ build:
 .PHONY: test-lecture1
 test-lecture1:
 	cabal test doctest-lecture1 --enable-tests --test-show-details=direct
-	cabal run exercises-test --enable-tests -- -m "Lecture1"
+	cabal run exercises-test --enable-tests -- -m "Lecture 1"
 
 .PHONY: test-all
 test-all:
