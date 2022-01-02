@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
+
 module Test.Lecture1
     ( lecture1Spec
     ) where

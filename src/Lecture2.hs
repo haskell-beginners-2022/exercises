@@ -54,7 +54,10 @@ lazyProduct = error "TODO"
 
 >>> duplicate [3, 1, 2]
 [3,3,1,1,2,2]
+>>> duplicate "cab"
+"ccaabb"
 -}
+duplicate :: [a] -> [a]
 duplicate = error "TODO"
 
 {- | Implement function that takes index and a list and removes the
@@ -200,6 +203,9 @@ The algorithm of merge sort is the following:
   2. Otherwise, split list into two lists of the same size.
   3. Sort each of two lists recursively.
   4. Merge two resulting sorted lists to get a new sorted list.
+
+>>> mergeSort [3, 1, 2]
+[1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
 mergeSort = error "TODO"
@@ -249,7 +255,7 @@ evaluation process.
 -}
 data EvalError
     = VariableNotFound String
-    deriving Show
+    deriving (Show, Eq)
 
 {- | Having all this set up, we can finally implement an evaluation function.
 It returns either a successful evaluation result or an error.
