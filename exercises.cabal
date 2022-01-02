@@ -31,17 +31,15 @@ common common-options
                        -Wincomplete-record-updates
                        -Wredundant-constraints
                        -Wnoncanonical-monad-instances
-  if impl(ghc >= 8.2)
-    ghc-options:       -fhide-source-paths
-  if impl(ghc >= 8.4)
-    ghc-options:       -Wmissing-export-lists
+                       -fhide-source-paths
+                       -Wmissing-export-lists
                        -Wpartial-fields
-  if impl(ghc >= 8.8)
-    ghc-options:       -Wmissing-deriving-strategies
-                       -fwrite-ide-info
-                       -hiedir=.hie
-  if impl(ghc >= 8.10)
-    ghc-options:       -Wunused-packages
+--  if impl(ghc >= 8.8)
+--    ghc-options:       -Wmissing-deriving-strategies
+--                       -fwrite-ide-info
+--                       -hiedir=.hie
+--  if impl(ghc >= 8.10)
+--    ghc-options:       -Wunused-packages
 
   default-language:    Haskell2010
   default-extensions:  ConstraintKinds
@@ -80,9 +78,12 @@ test-suite exercises-test
   main-is:             Spec.hs
 
   other-modules:       Test.Lecture1
+                       Test.Lecture2
 
   build-depends:       exercises
-                     , hspec ^>= 2.9
+                     , hspec          ^>= 2.9
+                     , hspec-hedgehog ^>= 0.0
+                     , hedgehog       ^>= 1.0
 
   ghc-options:         -threaded
                        -rtsopts
@@ -92,3 +93,8 @@ test-suite doctest-lecture1
   import:              common-doctest
   type:                exitcode-stdio-1.0
   main-is:             DoctestLecture1.hs
+
+test-suite doctest-lecture2
+  import:              common-doctest
+  type:                exitcode-stdio-1.0
+  main-is:             DoctestLecture2.hs
