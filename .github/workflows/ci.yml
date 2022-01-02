@@ -5,9 +5,9 @@ on:
     types: [synchronize, opened, reopened]
   push:
     branches: [main]
-  schedule:
-    # additionally run once per week (At 00:00 on Sunday) to maintain cache
-    - cron: '0 0 * * 0'
+#  schedule:
+#    # additionally run once per week (At 00:00 on Sunday) to maintain cache
+#    - cron: '0 0 * * 0'
 
 jobs:
   cabal:
@@ -58,7 +58,7 @@ jobs:
         cabal test all
 
   lecture1:
-    name: Lecture One
+    name: Lecture 1
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -85,4 +85,34 @@ jobs:
 
     - name: Lecture 1 - Tests
       run: |
-        cabal run exercises-test --enable-tests -- -m "Lecture1"
+        cabal run exercises-test --enable-tests -- -m "Lecture 1"
+
+  lecture2:
+    name: Lecture 2
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cabal: ["3.6.2.0"]
+        ghc: ["8.10.7"]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: haskell/actions/setup@v1
+      name: Setup Haskell
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
+
+    - uses: actions/cache@v2
+      name: Cache ~/.cabal/store
+      with:
+        path: ~/.cabal/store
+        key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
+
+    - name: Lecture 2 - Doctest
+      run: |
+        cabal test doctest-lecture2 --enable-tests --test-show-details=direct
+
+    - name: Lecture 2 - Tests
+      run: |
+        cabal run exercises-test --enable-tests -- -m "Lecture 2"
