@@ -65,10 +65,10 @@ element at the given position. Additionally, this function should also
 return the removed element.
 
 >>> removeAt 0 [1 .. 5]
-(Just 1, [2,3,4,5])
+(Just 1,[2,3,4,5])
 
 >>> removeAt 10 [1 .. 5]
-(Nothing, [1,2,3,4,5])
+(Nothing,[1,2,3,4,5])
 -}
 removeAt = error "TODO"
 

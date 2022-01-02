@@ -43,7 +43,7 @@ lecture2Normal = describe "Normal" $ do
 
     describe "removeAt" $ do
         let nothing = Nothing :: Maybe Int
-        it "Empty list by zero"   $ removeAt 0 []           `shouldBe` (nothing, [] :: String)
+        it "Empty list by zero"   $ removeAt 0 []           `shouldBe` (nothing, [] :: [Int])
         it "Singleton list on 0"  $ removeAt 0 [5]          `shouldBe` (Just 5, [] :: [Int])
         it "Singleton list on 1"  $ removeAt 1 [5]          `shouldBe` (nothing, [5])
         it "Singleton list on -1" $ removeAt (-1) [5]       `shouldBe` (nothing, [5])
