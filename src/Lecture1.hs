@@ -104,8 +104,8 @@ string.
 subString :: Int -> Int -> [a] -> [a]
 subString start end str = let end' = max 0 end
                               start' = max 0 start
-                              length = if end' > 0 then end' - start' + 1 else 0
-                           in take length $ drop start' str
+                              len = if end < 0 then 0 else end' - start' + 1
+                           in take len $ drop start' str
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.
@@ -133,9 +133,9 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 -}
 lowerAndGreater :: (Num a, Ord a, Show a) => a -> [a] -> [Char]
 lowerAndGreater n list = let (smallerCount, biggerCount) = partitionCount n list
-    in 
+    in
         show n ++ " is greater than " ++ show smallerCount ++ " elements and lower than " ++ show biggerCount ++ " elements"
-    
+
 
 partitionCount :: (Num a, Ord a, Num b) => a -> [a] -> (b, b)
 partitionCount _ [] = (0,0)
