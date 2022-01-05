@@ -46,19 +46,25 @@ zero, you can stop calculating product and return 0 immediately.
 
 >>> lazyProduct [4, 3, 7]
 84
+
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct [] = 1
+lazyProduct (0:_xs) = 0
+lazyProduct (x:xs) = x * lazyProduct xs
 
 {- | Implement a function that duplicates every element in the list.
 
 >>> duplicate [3, 1, 2]
 [3,3,1,1,2,2]
+
 >>> duplicate "cab"
 "ccaabb"
+
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate [] = []
+duplicate (x:xs) = x:x:duplicate xs
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -69,8 +75,16 @@ return the removed element.
 
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
+
 -}
-removeAt = error "TODO"
+
+removeAt :: (Ord t, Num t) => t -> [a] -> (Maybe a, [a])
+removeAt n list = if n < 0 then (Nothing, list) else remove n list []
+  where
+    remove 0 (x:xs) left = (Just x, left ++ xs)
+    remove _ [] left = (Nothing, left)
+    remove num (x:xs) left = remove (num-1) xs (left ++ [x])
+
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -81,7 +95,9 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+
+evenLists :: [[t]] -> [[t]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -97,7 +113,9 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+
+dropSpaces :: [Char] -> [Char]
+dropSpaces = filter (/= ' ')
 
 {- |
 
@@ -176,9 +194,15 @@ sorted).
 False
 >>> isIncreasing [1 .. 10]
 True
+
 -}
+
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing []= True
+isIncreasing [_]= True
+isIncreasing (x:y:xs)
+  | x >= y = False
+  | otherwise = isIncreasing (y:xs)
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -191,7 +215,11 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] xs = xs
+merge xs [] = xs
+merge (x:xs) (y:ys)
+  | x > y = y : merge (x:xs) ys
+  | otherwise = x : merge xs (y:ys)
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -208,11 +236,16 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort [] = []
+mergeSort [x] = [x]
+mergeSort xs = merge (mergeSort left) (mergeSort right)
+  where
+    at = div (length xs) 2
+    (left, right) = splitAt at xs
 
 
 {- | Haskell is famous for being a superb language for implementing
-compilers and interpeters to other programming languages. In the next
+compilers and interpreters to other programming languages. In the next
 tasks, you need to implement a tiny part of a compiler.
 
 We're going to work on a small subset of arithmetic operations.
@@ -253,15 +286,26 @@ Normally, this would be a sum type with several constructors
 describing all possible errors. But we have only one error in our
 evaluation process.
 -}
-data EvalError
+
+newtype EvalError
     = VariableNotFound String
     deriving (Show, Eq)
 
 {- | Having all this set up, we can finally implement an evaluation function.
 It returns either a successful evaluation result or an error.
 -}
+
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval _ (Lit n) = Right n
+eval variable (Var v) = case lookup v variable of
+  Nothing -> Left $ VariableNotFound v
+  Just n -> Right n
+eval variables (Add expr1 expr2) = case eval variables expr1 of
+  Left err1 -> Left err1
+  Right m -> case eval variables expr2 of
+    Left err2 -> Left err2
+    Right i -> Right $ m + i
+
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -284,5 +328,30 @@ x + 45 + y
 Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
+
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding (Lit x)=  Lit x
+constantFolding (Var x)= Var x
+
+constantFolding (Add (Lit x) (Lit y)) = Lit $ x + y
+
+constantFolding (Add (Lit 0) (Var s)) = Var s
+constantFolding (Add (Lit x) (Var s)) = Add (Var s) (Lit x)
+constantFolding (Add (Var s) (Lit x)) = constantFolding $ Add (Lit x) (Var s)
+
+constantFolding (Add (Var s) (Var x)) = Add (Var s) (Var x)
+
+constantFolding (Add (Lit x) (Add exp1 exp2)) = constantFolding $ Add exp1 expr
+  where
+    expr = constantFolding $ Add (Lit x) exp2
+constantFolding (Add (Add exp1 exp2) (Lit x)) = constantFolding $ Add (Lit x) (Add exp1 exp2)
+
+constantFolding (Add (Var x) (Add exp1 exp2)) = constantFolding $ Add exp1 expr
+  where
+    expr = constantFolding $ Add (Var x) exp2
+constantFolding (Add (Add exp1 exp2) (Var x)) = constantFolding $ Add (Var x) (Add exp1 exp2)
+
+constantFolding (Add expr1 expr2) = constantFolding $ Add expr1' expr2'
+  where
+    expr1' = constantFolding expr1
+    expr2' = constantFolding expr2
