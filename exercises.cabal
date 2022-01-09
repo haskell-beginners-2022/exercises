@@ -79,11 +79,13 @@ test-suite exercises-test
 
   other-modules:       Test.Lecture1
                        Test.Lecture2
+                       Test.Lecture3
 
   build-depends:       exercises
-                     , hspec          ^>= 2.9
-                     , hspec-hedgehog ^>= 0.0
-                     , hedgehog       ^>= 1.0
+                     , hspec            ^>= 2.9
+                     , hspec-hedgehog   ^>= 0.0
+                     , hedgehog         ^>= 1.0
+                     , hedgehog-classes ^>= 0.2
 
   ghc-options:         -threaded
                        -rtsopts
@@ -98,3 +100,8 @@ test-suite doctest-lecture2
   import:              common-doctest
   type:                exitcode-stdio-1.0
   main-is:             DoctestLecture2.hs
+
+test-suite doctest-lecture3
+  import:              common-doctest
+  type:                exitcode-stdio-1.0
+  main-is:             DoctestLecture3.hs
