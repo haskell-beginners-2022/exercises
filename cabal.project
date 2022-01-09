@@ -1,0 +1,8 @@
+packages: .
+
+constraints: hedgehog-classes -aeson -semirings -comonad -vector -primitive
+
+source-repository-package
+    type: git
+    location: https://github.com/chshersh/haskell-hedgehog-classes.git
+    tag: 7a46b92ed62cdae73cdca89db28c71a19020c802

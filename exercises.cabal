@@ -82,9 +82,10 @@ test-suite exercises-test
                        Test.Lecture3
 
   build-depends:       exercises
-                     , hspec          ^>= 2.9
-                     , hspec-hedgehog ^>= 0.0
-                     , hedgehog       ^>= 1.0
+                     , hspec            ^>= 2.9
+                     , hspec-hedgehog   ^>= 0.0
+                     , hedgehog         ^>= 1.0
+                     , hedgehog-classes ^>= 0.2
 
   ghc-options:         -threaded
                        -rtsopts
