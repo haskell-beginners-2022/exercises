@@ -9,6 +9,14 @@ Stability               : Stable
 Portability             : Portable
 
 Exercises for the Lecture 3 of the Haskell Beginners course.
+
+In this module you're going to practice standard Haskell typeclasses:
+
+  * Deriving instances
+  * Using typeclasses methods
+  * Implementing instances manually
+  * Becoming friends with Semigroup, Monoid, Foldable and Functor typeclasses!
+
 -}
 
 module Lecture3
@@ -26,6 +34,9 @@ module Lecture3
     , apply
     ) where
 
+
+-- $setup
+-- >>> import Data.Semigroup
 
 {- | Let's define a simple enumeration data type for representing days
 of the week.
@@ -161,9 +172,9 @@ together only different elements.
 [1,3,2,0,5]
 >>> appendDiff3 [4] [2, 2] [2, 2]
 [4,2,2]
->>> appendDiff [1 .. 5] [1 .. 5] [1 .. 5]
+>>> appendDiff3 [1 .. 5] [1 .. 5] [1 .. 5]
 [1,2,3,4,5]
->>> appendDiff (Product 2) (Product 3) (Product 3)
+>>> appendDiff3 (Product 2) (Product 3) (Product 3)
 Product {getProduct = 6}
 
 -}

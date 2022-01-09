@@ -6,10 +6,10 @@ module Test.Lecture3
 
 import Hedgehog (Gen)
 import Hedgehog.Classes (foldableLaws, functorLaws, lawsCheck, monoidLaws, semigroupLaws)
-import Test.Hspec (Expectation, Spec, describe, it, shouldBe, shouldReturn)
+import Test.Hspec (Spec, describe, it, shouldBe, shouldReturn)
 
 import Lecture3 (Gold (..), List1 (..), Reward (..), Treasure (..), Weekday (..), appendDiff3,
-                 apply, daysTo, next, toShortString)
+                 daysTo, next, toShortString)
 
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -39,19 +39,19 @@ lecture3Spec = describe "Lecture 3" $ do
         it "Monday -> Friday" $ daysTo Monday Friday `shouldBe` 4
         it "Monday -> Sunday" $ daysTo Monday Sunday `shouldBe` 6
         it "Sunday -> Monday" $ daysTo Sunday Monday `shouldBe` 1
-        it "Sunday -> Friday" $ daysTo Sunday Monday `shouldBe` 5
+        it "Sunday -> Friday" $ daysTo Sunday Friday `shouldBe` 5
 
     describe "Gold" $ do
         it "Laws: Semigroup" $
             lawsCheck (semigroupLaws genGold) `shouldReturn` True
         it "Laws: Monoid" $
-            lawsCheck (semigroupLaws genGold) `shouldReturn` True
+            lawsCheck (monoidLaws genGold) `shouldReturn` True
 
     describe "Reward" $ do
         it "Laws: Semigroup" $
             lawsCheck (semigroupLaws genReward) `shouldReturn` True
         it "Laws: Monoid" $
-            lawsCheck (semigroupLaws genReward) `shouldReturn` True
+            lawsCheck (monoidLaws genReward) `shouldReturn` True
 
     describe "List1" $ do
         it "Laws: Semigroup" $
@@ -61,7 +61,7 @@ lecture3Spec = describe "Lecture 3" $ do
         it "Laws: Semigroup" $
             lawsCheck (semigroupLaws genTreasure) `shouldReturn` True
         it "Laws: Monoid" $
-            lawsCheck (semigroupLaws genTreasure) `shouldReturn` True
+            lawsCheck (monoidLaws genTreasure) `shouldReturn` True
 
     describe "appendDiff3" $ do
         it "x y z" $ appendDiff3 [1] [2] [3] `shouldBe` [1, 2, 3]
