@@ -1,0 +1,1 @@
+cabal test all --enable-tests --test-show-details=direct

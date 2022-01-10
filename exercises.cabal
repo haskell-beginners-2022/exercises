@@ -70,6 +70,7 @@ library
                        Lecture2
                        Lecture3
                        Lecture4
+                       Utils
 
 test-suite exercises-test
   import:              common-options
