@@ -18,7 +18,7 @@ corresponding name (e.g. `Lecture1.hs`).
 ## Deadlines
 
 These exercises were created specifically for the Haskell Beginners
-2022 course. You can expect to get feedback on your solutions in you
+2022 course. You can expect to get feedback on your solutions if you
 meet the following deadlines:
 
 * `Lecture1.hs`: Jan 17, 2022, 23:59:59 GMT
@@ -44,7 +44,7 @@ environment and preparing the exercises repository.
     ```
 
     You can verify that everything is done correctly by running the
-    `git remote -v` command. The output of this command will looks
+    `git remote -v` command. The output of this command will look
     similar to the below:
 
     ```shell
@@ -56,7 +56,7 @@ environment and preparing the exercises repository.
 
 ### Asking for feedback
 
-When you finished implementing exercises for a particular lecture,
+When you have finished implementing exercises for a particular lecture,
 create a Pull Request to **your fork**. The repository already
 contains PR template with the prefilled text and mentions all current
 mentors of the course.
@@ -64,7 +64,7 @@ mentors of the course.
 > ℹ️**NOTE:** Open Pull Request to **your fork** and not this
 > repository. We can't merge solutions to this repo. But if you open
 > PRs to your repository, you can eventually merge all the solutions
-> and enjoy gree all-passing CI 🍏
+> and enjoy green all-passing CI 🍏
 
 To open a PR to your fork, you need to change _base repository_ to 
 your own repository, as shown on the screenshot below:
