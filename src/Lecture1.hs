@@ -51,7 +51,8 @@ Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-sumOfSquares x y = error "TODO!"
+sumOfSquares :: Integer -> Integer -> Integer 
+sumOfSquares x y = sum . map (^2) $ [x, y]
 
 {- | Implement a function that returns the last digit of a given number.
 
