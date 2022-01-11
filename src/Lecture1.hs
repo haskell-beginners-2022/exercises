@@ -130,12 +130,14 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 
 🕯 HINT: Use recursion to implement this function.
 -}
+lowerAndGreater :: Integer -> [Integer] -> [Char]
 lowerAndGreater n list = show
     n 
         ++ " is greater than " 
-        ++ show small 
+        ++ show smaller
         ++ " elements and lower than " 
-        ++ show large ++ " elements" 
+        ++ show larger 
+        ++ " elements" 
     where 
-        small = length $ filter (<n) list 
-        large = length $ filter (>n) list 
+        smaller = length $ filter (<n) list 
+        larger = length $ filter (>n) list 
