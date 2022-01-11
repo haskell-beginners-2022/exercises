@@ -51,7 +51,7 @@ Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-sumOfSquares :: Integer -> Integer -> Integer 
+sumOfSquares :: Integer -> Integer -> Integer
 sumOfSquares x y = sum . map (^2) $ [x, y]
 
 {- | Implement a function that returns the last digit of a given number.
@@ -65,7 +65,9 @@ sumOfSquares x y = sum . map (^2) $ [x, y]
 
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-lastDigit n = error "lastDigit: Not implemented!"
+lastDigit :: Integer  -> Integer
+lastDigit 0 = 0
+lastDigit n = abs n `mod` 10
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
