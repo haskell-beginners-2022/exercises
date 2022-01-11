@@ -4,8 +4,6 @@
 [![Hackage](https://img.shields.io/hackage/v/exercises.svg?logo=haskell)](https://hackage.haskell.org/package/exercises)
 [![MPL-2.0 license](https://img.shields.io/badge/license-MPL--2.0-blue.svg)](LICENSE)
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/haskell-beginners-2022/exercises)
-
 Exercises for the Haskell Beginners 2022 course. The course itself can be found here:
 
 * [Haskell Beginners 2022 Course](https://github.com/haskell-beginners-2022/course-plan)
@@ -155,6 +153,15 @@ If you don't have any IDE preferences, we recommend installing
 [Visual Studio Code](https://code.visualstudio.com/download) with the
 [Haskell plugin](https://marketplace.visualstudio.com/items?itemName=haskell.haskell).
 The mentioned plugin would give you everything required to immediately start coding with Haskell.
+
+### Gitpod
+Instead of configuring a local setup, you can also use [Gitpod](https://www.gitpod.io/), a VSCode-based Web IDE.
+
+Click the button below. A workspace with Haskell environment will be created.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/haskell-beginners-2022/exercises)
+
+To use it on your forked repo, edit the 'Open in Gitpod' button url to `https://gitpod.io/#https://github.com/<my-github-username>/exercises`
 
 ## How to build and test?
 
