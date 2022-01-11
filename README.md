@@ -56,6 +56,14 @@ environment and preparing the exercises repository.
 
 ### Asking for feedback
 
+Implement your solutions in a separate branch (not `main`). You can
+run the following command to create a new branch and switch to it at
+the same time:
+
+```shell
+git checkout -b lecture-1-solutions
+```
+
 When you have finished implementing exercises for a particular lecture,
 create a Pull Request to **your fork**. The repository already
 contains PR template with the prefilled text and mentions all current
