@@ -1,0 +1,17 @@
+resolver: lts-18.21
+
+flags:
+  hedgehog-classes:
+    aeson: false
+    semirings: false
+    comonad: false
+    vector: false
+    primitive: false
+
+extra-deps:
+  - doctest-0.20.0
+  - hspec-2.9.4
+  - hspec-core-2.9.4
+  - hspec-discover-2.9.4
+  - git: https://github.com/chshersh/haskell-hedgehog-classes.git
+    commit: 7a46b92ed62cdae73cdca89db28c71a19020c802
