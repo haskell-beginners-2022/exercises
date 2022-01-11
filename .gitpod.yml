@@ -24,3 +24,7 @@ tasks:
       ghcup upgrade
       # Show installed packages
       ghcup list
+
+vscode:
+  extensions:
+    - haskell.haskell
