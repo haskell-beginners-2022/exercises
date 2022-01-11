@@ -15,7 +15,7 @@ lecture1Spec = describe "Lecture 1" $ do
         it "The type is correct" $
             makeSnippet 15 "Lorem ipsum" `shouldBe` "Description: Lo..."
 
-    describe "sumOfsquares" $ do
+    describe "sumOfSquares" $ do
         it "Zeroes"        $ sumOfSquares 0 0       `shouldBe` 0
         it "Big numbers"   $ sumOfSquares 100 50    `shouldBe` 12500
         it "Both negative" $ sumOfSquares (-8) (-4) `shouldBe` 80
