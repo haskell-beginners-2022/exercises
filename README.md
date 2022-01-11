@@ -4,7 +4,7 @@
 [![Hackage](https://img.shields.io/hackage/v/exercises.svg?logo=haskell)](https://hackage.haskell.org/package/exercises)
 [![MPL-2.0 license](https://img.shields.io/badge/license-MPL--2.0-blue.svg)](LICENSE)
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/nadinda/exercises/)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/haskell-beginners-2022/exercises)
 
 Exercises for the Haskell Beginners 2022 course. The course itself can be found here:
 
