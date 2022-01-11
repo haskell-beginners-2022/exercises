@@ -81,7 +81,8 @@ and 1 is the smallest, and 7 - 1 = 6.
 Try to use local variables (either let-in or where) to implement this
 function.
 -}
-minmax x y z = error "TODO"
+minmax :: (Num a, Ord a) => a -> a -> a -> a
+minmax x y z = max x (max y z) - min x (min y z)
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
