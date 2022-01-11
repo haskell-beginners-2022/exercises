@@ -72,7 +72,7 @@ mentors of the course.
 > PRs to your repository, you can eventually merge all the solutions
 > and enjoy green all-passing CI 🍏
 
-To open a PR to your fork, you need to change _base repository_ to 
+To open a PR to your fork, you need to change _base repository_ to
 your own repository, as shown on the screenshot below:
 
 ![PR to fork example](https://user-images.githubusercontent.com/4276606/147921946-e9b84424-e76f-4f7a-8976-e33564ae1532.png)
@@ -156,6 +156,12 @@ The mentioned plugin would give you everything required to immediately start cod
 
 ## How to build and test?
 
+There're two ways to build this project: using either `cabal` or
+`stack` build tools. Using `cabal` is the recommended way. However, if
+it doesn't work, you may want to use `stack`.
+
+### Cabal
+
 To compile the entire project, run the following command from your terminal:
 
 ```shell
@@ -174,6 +180,29 @@ tests for the `strSum` function, execute the following command:
 
 ```shell
 cabal run exercises-test --enable-tests -- -m "strSum"
+```
+
+### Stack
+
+Use the [official `stack` installation instructions](https://docs.haskellstack.org/en/stable/install_and_upgrade/) to install `stack`.
+
+To build the project with `stack`, run the following command:
+
+```shell
+stack build --test --no-run-tests
+```
+
+To run tests for the first lecture, run the following commands:
+
+```shell
+stack test :doctest-lecture1
+stack test :exercises-test --test-arguments='-m "Lecture 1"'
+```
+
+And to tests a specific function, use:
+
+```shell
+stack test :exercises-test --test-arguments='-m "strSum"'
 ```
 
 ## Acknowledgement
