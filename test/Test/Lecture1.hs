@@ -41,7 +41,7 @@ lecture1Spec = describe "Lecture 1" $ do
         it "Bounds are bigger" $ subString 0 100     "Hello!" `shouldBe` "Hello!"
         it "From negative"     $ subString (-1) 3    "Hello!" `shouldBe` "Hell"
         it "Both negative"     $ subString (-7) (-3) "Hello!" `shouldBe` ""
-        it "Negative to zero"  $ subString (-5) 0    "Hello!" `shouldBe` ""
+        it "Negative to zero"  $ subString (-5) 0    "Hello!" `shouldBe` "H"
 
     describe "strSum" $ do
         it "Empty string"           $ strSum ""                   `shouldBe` 0
