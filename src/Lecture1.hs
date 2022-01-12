@@ -102,8 +102,8 @@ string.
 subString :: Int -> Int -> String -> String
 subString start end str
         | start == 0 && end == 0 = take 1 str
-        | end <= 0 = [] 
-        | start < 0 && end >= 0 = take ((end + 1) - 0) (drop 0 str)
+        | end <= 0 = []
+        | start < 0 && end >= 0 = take (end + 1) str
         | otherwise = take ((end + 1) - start) (drop start str)
 
 {- | Write a function that takes a String — space separated numbers,
@@ -133,12 +133,12 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 -}
 lowerAndGreater :: Integer -> [Integer] -> [Char]
 lowerAndGreater n list = show
-    n 
-        ++ " is greater than " 
+    n
+        ++ " is greater than "
         ++ show smaller
-        ++ " elements and lower than " 
-        ++ show larger 
-        ++ " elements" 
-    where 
-        smaller = length $ filter (<n) list 
-        larger = length $ filter (>n) list 
+        ++ " elements and lower than "
+        ++ show larger
+        ++ " elements"
+    where
+        smaller = length $ filter (<n) list
+        larger = length $ filter (>n) list
