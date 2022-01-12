@@ -99,10 +99,11 @@ start position can be considered as zero (e.g. substring from the
 first character) and negative end position should result in an empty
 string.
 -}
-subString :: Int -> Int -> [String] -> [String]
+subString :: Int -> Int -> String -> String
 subString start end str
-        | start < 0 = take ((end + 1) - 0) (drop 0 str)
-        | end < 0 = []
+        | start == 0 && end == 0 = take 1 str
+        | end <= 0 = [] 
+        | start < 0 && end >= 0 = take ((end + 1) - 0) (drop 0 str)
         | otherwise = take ((end + 1) - start) (drop start str)
 
 {- | Write a function that takes a String — space separated numbers,
