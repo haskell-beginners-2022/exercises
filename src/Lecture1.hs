@@ -65,7 +65,7 @@ sumOfSquares x y = (x*x) + (y*y)
 
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-lastDigit :: Integral a => a -> a
+lastDigit :: Int -> Int
 lastDigit n = mod (abs n) 10
 
 {- | Write a function that takes three numbers and returns the
@@ -82,8 +82,8 @@ function.
 -}
 
 
-minmax :: (Ord a, Num a) => a -> a -> a -> a
-minmax x y z = max a $ max b c 
+minmax :: Int -> Int -> Int -> Int
+minmax x y z = max a $ max b c
     where a = abs (x - y)
           b = abs (x - z)
           c = abs (z - y)
@@ -106,11 +106,12 @@ string.
 
 
 subString :: Int -> Int -> String -> String
-subString start end str = let startFrom = max start 0
-                              takeAmount = max end 0 - (startFrom -1)
-                              fromNtakeM :: Int -> Int-> String -> String
-                              fromNtakeM n m string = take m $ drop n string
-                              in fromNtakeM startFrom takeAmount str
+subString start end = fromNtakeM start0 (end0-start0)
+    where start0 = max start 0
+          end0 = max (end+1) 0
+          fromNtakeM :: Int -> Int-> String -> String
+          fromNtakeM n m = take m . drop n
+
 
 
 {- | Write a function that takes a String — space separated numbers,
@@ -121,7 +122,7 @@ and finds a sum of the numbers inside this string.
 
 The string contains only spaces and/or numbers.
 -}
-strSum :: (Num a, Read a) => String -> a
+strSum :: String -> Int
 strSum str = sum $ map read $ words str
 
 {- | Write a function that takes a number and a list of numbers and
@@ -138,8 +139,18 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 🕯 HINT: Use recursion to implement this function.
 -}
 
+lowerAndGreater :: Int -> [Int] -> [Char]
+lowerAndGreater number arr = printOut number greaterNum lowerNum
+    where lowerAndGreaterArr :: Int -> [Int] -> [Int]
+          lowerAndGreaterArr _ []     = []
+          lowerAndGreaterArr n [x]    | x > n = [1] | x < n = [-1] | otherwise = [0]
+          lowerAndGreaterArr n (x:xs) = lowerAndGreaterArr n [x]  ++ lowerAndGreaterArr n xs
 
-lowerAndGreater :: (Show a, Ord a) => a -> [a] -> [Char]
-lowerAndGreater n list = show n ++ " is greater than " ++ show greaterThan ++ " elements and lower than " ++ show lowerThan ++ " elements"
-        where greaterThan = length $ filter (< n) list
-              lowerThan = length $ filter (> n) list
+          numTimesFound :: Eq a => a -> [a] -> Int
+          numTimesFound x = length . filter (== x)
+
+          lowerNum = numTimesFound 1 $ lowerAndGreaterArr number arr
+          greaterNum = numTimesFound (-1) $ lowerAndGreaterArr number arr
+
+          printOut :: Int -> Int -> Int -> String
+          printOut n gn ln = show n ++ " is greater than " ++ show gn ++ " elements and lower than " ++ show ln ++ " elements"
