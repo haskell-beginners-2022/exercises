@@ -35,7 +35,7 @@ module Lecture1
 its behaviour, possible types for the function arguments and write the
 type signature explicitly.
 -}
-makeSnippet :: Int -> [Char] -> [Char]
+makeSnippet :: Int -> String -> String
 makeSnippet limit text = take limit ("Description: " ++ text) ++ "..."
 
 {- | Implement a function that takes two numbers and finds sum of
@@ -101,7 +101,7 @@ start position can be considered as zero (e.g. substring from the
 first character) and negative end position should result in an empty
 string.
 -}
-subString :: Int -> Int -> [Char] -> [Char]
+subString :: Int -> Int -> String -> String
 subString start end str
     | end < 0 = ""
     | otherwise = take ((end + 1) - posIndex start) (drop (posIndex start) str)
@@ -118,8 +118,8 @@ and finds a sum of the numbers inside this string.
 
 The string contains only spaces and/or numbers.
 -}
-strSum :: [Char] -> Int
-strSum str = error "TODO"
+strSum :: String -> Int
+strSum str = sum $ map read $ words str
 
 
 {- | Write a function that takes a number and a list of numbers and
@@ -135,4 +135,13 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 
 🕯 HINT: Use recursion to implement this function.
 -}
-lowerAndGreater n list = error "TODO"
+
+lowerAndGreater :: Int -> [Int] -> String
+lowerAndGreater n list = go 0 0 list
+  where
+    go :: Int -> Int -> [Int] -> String
+    go lower higher l
+        | null l = show n ++ " is greater than " ++ show higher ++  " elements and lower than " ++ show lower ++ " elements"
+        | n < head l = go (lower + 1) higher (tail l)
+        | n > head l = go lower (higher + 1) (tail l)
+        | otherwise = go lower higher (tail l)
