@@ -44,6 +44,7 @@ lecture1Spec = describe "Lecture 1" $ do
         it "Negative to zero"  $ subString (-5) 0    "Hello!" `shouldBe` "H"
         it "0 to -1"           $ subString 0 (-1)    "Hello!" `shouldBe` ""
         it "1 to -1"           $ subString 1 (-1)    "Hello!" `shouldBe` ""
+        it "Start > 0"         $ subString 2 4       "Hello!" `shouldBe` "llo"
 
     describe "strSum" $ do
         it "Empty string"           $ strSum ""                   `shouldBe` 0
