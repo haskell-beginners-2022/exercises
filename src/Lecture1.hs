@@ -72,7 +72,7 @@ lastDigit 0 = 0
 lastDigit x
     | x < 0 = -(x `rem` 10)
 	| otherwise = x `rem` 10
-{-lastDigit n = error "lastDigit: Not implemented!"
+--lastDigit n = error "lastDigit: Not implemented!"
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
 
