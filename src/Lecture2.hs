@@ -195,13 +195,6 @@ verify that.
 >>> merge [1, 2, 4] [3, 7]
 [1,2,3,4,7]
 -}
-merge :: [Int] -> [Int] -> [Int]
-merge [] [] = []
-merge [] y = y
-merge x [] = x
-merge (x : xs) (y : ys) = if x < y
-  then x : merge xs (y : ys)
-  else y : merge (x : xs) ys 
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -218,7 +211,18 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort [] = []
+mergeSort [x] = [x]
+mergeSort [x, y] = 
+  if x > y
+  then [y, x]
+  else [x, y]
+mergeSort x = 
+  let
+    len = length x
+    listTuple = splitAt (len `div` 2) x
+  in
+    merge (mergeSort (fst listTuple)) (mergeSort (snd listTuple))
 
 
 {- | Haskell is famous for being a superb language for implementing
