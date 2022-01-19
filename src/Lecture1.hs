@@ -51,7 +51,7 @@ Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-sumOfSquares:: Int -> Int > Int
+sumOfSquares:: Int -> Int -> Int
 sumOfSquares 0 0 = 0
 sumOfSquares x y = (x^2) + (y ^2)
 --sumOfSquares x y = error "TODO!"
