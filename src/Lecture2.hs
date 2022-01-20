@@ -73,12 +73,13 @@ return the removed element.
 >>> removeAt 0 [1 .. 5]
 (Just 1,[2,3,4,5])
 
+
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt :: Int -> [a] -> (Maybe (a), [a])
-removeAt x list = 
-  if length list < x
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt x list =
+  if (length list <= x) || (x < 0)
     then (Nothing , list)
     else (Just(list!!x), take x list ++ drop (x + 1) list)
 
@@ -91,7 +92,8 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -107,7 +109,11 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: [Char] -> [Char]
+dropSpaces [] = []
+dropSpaces (x : xs) = if x == ' '
+  then dropSpaces xs
+  else x : dropSpaces xs
 
 {- |
 
@@ -193,7 +199,7 @@ isIncreasing [_] = True
 isIncreasing (x : y : []) = x < y
 isIncreasing (x : y : xs) = (x < y) && isIncreasing xs
 
-   
+
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -211,7 +217,7 @@ merge [] y = y
 merge x [] = x
 merge (x : xs) (y : ys) = if x < y
   then x : merge xs (y : ys)
-  else y : merge (x : xs) ys 
+  else y : merge (x : xs) ys
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -230,11 +236,11 @@ The algorithm of merge sort is the following:
 mergeSort :: [Int] -> [Int]
 mergeSort [] = []
 mergeSort [x] = [x]
-mergeSort [x, y] = 
+mergeSort [x, y] =
   if x > y
   then [y, x]
   else [x, y]
-mergeSort x = 
+mergeSort x =
   let
     len = length x
     listTuple = splitAt (len `div` 2) x
