@@ -57,9 +57,14 @@ lecture2Normal = describe "Normal" $ do
         it "List on length"       $ removeAt 3 [3, 1, 2]    `shouldBe` (nothing, [3, 1, 2])
         it "List on pre length"   $ removeAt 2 [3, 1, 2]    `shouldBe` (Just 2, [3, 1])
         it "String on middle"     $ removeAt 2 "Hello"      `shouldBe` (Just 'l', "Helo")
+
         it "Remove from infinite" $ do
             let result = second (take 7) (removeAt 5 [1 .. ])
             result `shouldBe` (Just 6, [1, 2, 3, 4, 5, 7, 8])
+
+        it "Remove from infinite with negative index" $ do
+            let result = second (take 5) (removeAt (-1) [1 .. ])
+            result `shouldBe` (nothing, [1 .. 5])
 
     describe "evenLists" $ do
         it "Empty list"      $ evenLists []                    `shouldBe` ([] :: [String])
@@ -87,6 +92,7 @@ lecture2Hard = describe "Hard" $ do
         it "Big range" $ isIncreasing [1 .. 1000] `shouldBe` True
         it "First element wrong" $ isIncreasing (100 : [1 .. 5]) `shouldBe` False
         it "Last element wrong" $ isIncreasing ([1 .. 5] ++ [0]) `shouldBe` False
+        it "Small, big, small" $ isIncreasing [1, 2, 1] `shouldBe` False
         it "Lazy: doesn't crash" $ isIncreasing [10, 5, error "Oops!"] `shouldBe` False
         it "Lazy: works on infinite lists" $ isIncreasing (10 : [0 .. ]) `shouldBe` False
 
