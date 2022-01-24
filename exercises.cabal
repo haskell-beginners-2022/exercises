@@ -71,6 +71,11 @@ library
                        Lecture3
                        Lecture4
                        Utils
+                       
+  -- mixins:              base hiding (Prelude)
+                    --  , relude (Relude as Prelude)
+                    --  , relude
+  build-depends:       relude           ^>= 1.0
 
 test-suite exercises-test
   import:              common-options

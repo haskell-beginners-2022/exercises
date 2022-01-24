@@ -1,7 +1,6 @@
 module Utils
     ( count
     , count2
-    , (!?)
     , mapEither
     , mapRight
     , mapRight2
@@ -27,17 +26,6 @@ count2 p q =
         inner x (a', b') | p x        = (a' + 1, b'    )
         inner x (a', b') |        q x = (a'    , b' + 1)
         inner _ (a', b')              = (a', b')
-
-infixl 9 !?
--- As per https://hackage.haskell.org/package/extra-1.7.10/docs/src/Data.List.Extra.html#%21%3F
-{- | Like @!!@, but wraps the result in a @Maybe@ and returns @Nothing@ if there is no element at that position
--}
-(!?) :: [a] -> Int -> Maybe a
-_ !? n | n < 0 = Nothing
-xs !? n = foldr (\x r k -> case k of
-    0 -> Just x
-    _ -> r (k - 1)) (const Nothing) xs n
-
 
 mapEither :: (a -> a') -> (b -> b') -> Either a b -> Either a' b'
 mapEither f _ (Left x) = Left $ f x
@@ -66,3 +54,11 @@ safeSum a b
         signA = signum a
         signB = signum b
         sameSign = signA == signB
+-- | there is @listToMaybe@ but it's a stupid name
+headMaybe :: [a] -> Maybe a
+headMaybe [] = Nothing
+headMaybe (x : _) = Just x
+
+tailMaybe :: [a] -> Maybe [a]
+tailMaybe [] = Nothing
+tailMaybe (_ : xs) = Just xs
