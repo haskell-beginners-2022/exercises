@@ -39,6 +39,9 @@ module Lecture2
     , eval
     , constantFolding
     ) where
+import Data.List ( dropWhileEnd )
+import Data.Char ( isSpace )
+import Control.Arrow (Arrow(first))
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -48,7 +51,14 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct list = go list 1
+  where
+    go :: [Int] -> Int -> Int
+    go [] result = result
+    go (0 : _) _ = 0
+    go (x: xs) result = go xs x * result
+
+
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -58,7 +68,7 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate = concatMap (replicate 2)
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -70,7 +80,15 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt index list = if index >= 0 && index < length list then (Just (list !!index), removeN index list) else (Nothing, list)
+  where
+    removeN :: Int -> [a] -> [a]
+    removeN _ []     = []
+    removeN i (x:xs)
+       | i == 0    = xs
+       | otherwise = x : removeN (i-1) xs
+
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -81,7 +99,9 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists = filter (even . length)
+
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -97,7 +117,8 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: String -> String
+dropSpaces =  dropWhileEnd isSpace . dropWhile isSpace
 
 {- |
 
@@ -150,14 +171,42 @@ You're free to define any helper functions.
        treasure besides gold (if you already haven't done this).
 -}
 
+newtype Health = MkHealth Int
+newtype Attack = MkAttack Int 
+newtype Endurance = MkEndurance Int 
 -- some help in the beginning ;)
 data Knight = Knight
-    { knightHealth    :: Int
-    , knightAttack    :: Int
-    , knightEndurance :: Int
+    { knightHealth    :: Health
+    , knightAttack    :: Attack
+    , knightEndurance :: Endurance
     }
+data Color = Red
+    |Green
+    |Black
 
+
+newtype FirePower = MkFirePower Int 
+
+data Dragon = Dragon
+    { dragonType :: Color,
+      dragonFirePower :: FirePower
+    }  
+
+newtype Gold = MkGold Int
+newtype Treasure = MkTreasure Int
+
+data Chest =  Chest 
+    {
+      chestGold :: Gold,
+      chestTreasure :: Maybe [Treasure]
+    } 
+
+
+
+
+dragonFight ::  Dragon -> Knight -> Chest
 dragonFight = error "TODO"
+
 
 ----------------------------------------------------------------------------
 -- Challenges
@@ -178,7 +227,10 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = True
+isIncreasing [_] = True
+isIncreasing (x:y:xs) = x <= y && isIncreasing (y:xs) 
+
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -191,7 +243,9 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge xs     []     = xs
+merge []     ys     = ys
+merge (x:xs) (y:ys) = if x < y then x : merge xs (y:ys) else y : merge (x:xs) ys
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -208,7 +262,16 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort []  = []
+mergeSort [x] = [x]
+mergeSort xs  = merge firstHalfSorted secondHalfSorted
+  where 
+    half           = splitAt (length xs `div` 2) xs
+    firstHalfSorted  = mergeSort (fst half) 
+    secondHalfSorted = mergeSort (snd half)
+    
+
+  
 
 
 {- | Haskell is famous for being a superb language for implementing
@@ -261,7 +324,26 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval _ (Lit n) = Right n
+eval vars (Var x) = 
+  case lookup x vars  of 
+    Nothing -> Left (VariableNotFound x)
+    Just a -> Right a
+eval vars (Add left right) = sumEither (eval vars left)  (eval vars right)
+  where 
+    sumEither :: Either EvalError Int -> Either EvalError Int -> Either EvalError Int
+    sumEither first second =
+      case first of 
+        Left err1 -> 
+          case second of 
+                        Left err2 -> Left err2
+                        Right _ -> Left err1
+        Right a -> 
+          case second of 
+                        Left err -> Left err 
+                        Right b -> Right (a + b) 
+
+  
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -285,4 +367,4 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding expr = error "TODO"
