@@ -31,7 +31,7 @@ module Lecture1
     , lowerAndGreater
     ) where
 import Data.Char (digitToInt)
-import Utils (count, (!?))
+import Utils (count2, (!?))
 import Data.Maybe (mapMaybe)
 
 {- | Specify the type signature of the following function. Think about
@@ -53,7 +53,7 @@ their squares.
 Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
-sumOfSquares :: Int -> Int -> Int
+sumOfSquares :: Num a => a -> a -> a
 sumOfSquares x y = x * x + y * y
 
 {- | Implement a function that returns the last digit of a given number.
@@ -66,10 +66,12 @@ sumOfSquares x y = x * x + y * y
 🕯 HINT: use the @mod@ function
 
 -}
-lastDigit :: Int -> Int
+
+lastDigit :: (Enum a, Show a) => a -> a
 -- | @mod@? NAAH have this /beautiful/ code
 -- Convert @n@ to string, take the last item (via @foldr1@) and convert it back into an int
-lastDigit n = digitToInt $ foldr1 (\_ x -> x) $ show n
+lastDigit = toEnum . digitToInt . foldr1 (\_ x -> x) . show
+-- I guess you wouldn't need a @Show@ instance nor an @Enum@ instance (just an @Integral@ instance) if you used @mod@, but hey :)
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
@@ -83,7 +85,8 @@ and 1 is the smallest, and 7 - 1 = 6.
 Try to use local variables (either let-in or where) to implement this
 function.
 -}
-minmax :: Num a => Ord a => a -> a -> a -> a
+
+minmax :: (Num a, Ord a) => a -> a -> a -> a
 minmax x y z = maximum [x, y, z] - minimum [x, y, z]
 -- I mean, if you reeeally want me to use where:
 {-
@@ -122,9 +125,9 @@ and finds a sum of the numbers inside this string.
 
 The string contains only spaces and/or numbers.
 -}
-strSum :: String -> Int
+strSum :: (Num a, Read a) => String -> a
 -- Split the string into words, @read@ them (type inference does its job here) and @sum@ them up
-strSum str = sum $ map read $ words str
+strSum = sum . map read . words
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
@@ -139,8 +142,11 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 
 🕯 HINT: Use recursion to implement this function.
 -}
-lowerAndGreater :: Int -> [Int] -> String
--- I guess @count@ is implemented recursively, does that count? Hope so, I made it with love 💜
+lowerAndGreater :: (Foldable t, Ord a, Show a) => a -> t a -> String
+-- I guess @count2@ is implemented recursively, does that count? Hope so, I made it with love 💜
 lowerAndGreater n list =
-    show n ++ " is greater than " ++ show (count (< n) list) ++ " elements and lower than " ++ show (count (> n) list) ++ " elements"
-
+    show n ++ " is greater than " ++ show greater ++ " elements and lower than " ++ show lower ++ " elements"
+    where
+        lower :: Integer
+        greater :: Integer
+        (lower, greater) = count2 (> n) (< n) list

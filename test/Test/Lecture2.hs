@@ -85,7 +85,7 @@ lecture2Normal = describe "Normal" $ do
 lecture2Hard :: Spec
 lecture2Hard = describe "Hard" $ do
     describe "isIncreasing" $ do
-        it "Empty list" $ isIncreasing [] `shouldBe` True
+        it "Empty list" $ isIncreasing ([] :: [Int]) `shouldBe` True
         it "Singleton list" $ isIncreasing [5] `shouldBe` True
         it "Two elements sorted" $ isIncreasing [1, 2] `shouldBe` True
         it "Two elements chaos" $ isIncreasing [2, 1] `shouldBe` False
@@ -101,7 +101,7 @@ lecture2Hard = describe "Hard" $ do
             assert $ isIncreasing (sort xs)
 
     describe "merge" $ do
-        it "Two empty" $ merge [] [] `shouldBe` []
+        it "Two empty" $ merge ([] :: [Int]) [] `shouldBe` []
         it "Left empty" $ merge [] [1, 2] `shouldBe` [1, 2]
         it "Right empty" $ merge [3, 4] [] `shouldBe` [3, 4]
         it "Two single" $ merge [5] [10] `shouldBe` [5, 10]
@@ -116,7 +116,7 @@ lecture2Hard = describe "Hard" $ do
             merge (sort xs) (sort ys) === sort (xs ++ ys)
 
     describe "mergeSort" $ do
-        it "Empty list" $ mergeSort [] `shouldBe` []
+        it "Empty list" $ mergeSort ([] :: [Int]) `shouldBe` []
         it "Singleton list" $ mergeSort [5] `shouldBe` [5]
         it "Already sorted" $ mergeSort [1 .. 5] `shouldBe` [1 .. 5]
         it "Reversed" $ mergeSort [10, 9 .. 0] `shouldBe` [0 .. 10]
