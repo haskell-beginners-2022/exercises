@@ -49,8 +49,10 @@ module Lecture2
     ) where
 
 
-import Utils ((!?), lookupAll, safeSum)
+import Utils (lookupAll)
 import Data.Char (isSpace)
+import Relude ((!!?))
+import Numeric.Decimal.BoundedArithmetic (plusBounded)
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -89,7 +91,7 @@ return the removed element.
 (Nothing,[1,2,3,4,5])
 -}
 removeAt :: Int -> [a] -> (Maybe a, [a])
-removeAt idx xs = (xs !? idx, take idx xs ++ drop (idx + 1) xs)
+removeAt idx xs = (xs !!? idx, take idx xs ++ drop (idx + 1) xs)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -448,7 +450,7 @@ The algorithm of merge sort is the following:
 -- Based on @msort@ as implemented in Listing 21.5 of Programming in Scala, Fifth Edition, by Odersky et al.
 mergeSort :: Ord a => [a] -> [a]
 mergeSort [] = []
-mergeSort (x : []) = [x]
+mergeSort [x] = [x]
 mergeSort xs =
     merge (mergeSort as) (mergeSort bs)
     where
@@ -515,12 +517,12 @@ eval :: Variables -> Expr -> Either EvalError Int
 eval _ (Lit n) = Right n
 eval vars (Var var) = case lookupAll var vars of
     [] -> Left $ VariableNotFound var
-    x : [] -> Right x
+    [x] -> Right x
     _ : _ : _ -> Left $ MultipleVariablesFound var
 eval vars (Add a b) = case (a', b') of
     (Left ae, _) -> Left ae
     (_, Left be) -> Left be
-    (Right a'', Right b'') -> case safeSum a'' b'' of
+    (Right a'', Right b'') -> case a'' `plusBounded` b'' of
         Just res -> Right res
         Nothing -> Left $ IntOverflow a'' b''
     where

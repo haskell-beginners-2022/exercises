@@ -76,6 +76,8 @@ library
                     --  , relude (Relude as Prelude)
                     --  , relude
   build-depends:       relude           ^>= 1.0
+                     , composition      ^>= 1.0
+                     , safe-decimal     ^>= 0.2
 
 test-suite exercises-test
   import:              common-options

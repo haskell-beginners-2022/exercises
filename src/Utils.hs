@@ -5,7 +5,10 @@ module Utils
     , mapRight
     , mapRight2
     , lookupAll
-    , safeSum
+    , headMaybe
+    , tailMaybe
+    , listOfTwo
+    , listOfThree
     ) where
 
 {- | GHC 9 comes with @GHC.Utils.Misc.count@, this is GHC 8 tho
@@ -42,18 +45,6 @@ mapRight2 f (Right x) (Right y) = Right $ f x y
 lookupAll :: Eq a => a -> [(a, b)] -> [b]
 lookupAll needle list = map snd $ filter (\x -> fst x == needle) list
 
--- As per https://hackage.haskell.org/package/safe-decimal-0.2.1.0/docs/src/Numeric.Decimal.BoundedArithmetic.html#plusBounded
-{- | Checks for over-/under-flow before summing
--}
-safeSum :: (Ord a, Num a, Bounded a) => a -> a -> Maybe a
-safeSum a b
-    | sameSign && signA == 1 && a > maxBound - b = Nothing
-    | sameSign && signA == -1 && a > minBound - b = Nothing
-    | otherwise = Just $ a + b
-    where
-        signA = signum a
-        signB = signum b
-        sameSign = signA == signB
 -- | there is @listToMaybe@ but it's a stupid name
 headMaybe :: [a] -> Maybe a
 headMaybe [] = Nothing
@@ -62,3 +53,9 @@ headMaybe (x : _) = Just x
 tailMaybe :: [a] -> Maybe [a]
 tailMaybe [] = Nothing
 tailMaybe (_ : xs) = Just xs
+
+listOfTwo :: a -> a -> [a]
+listOfTwo a b = [a, b]
+
+listOfThree :: a -> a -> a -> [a]
+listOfThree a b c = [a, b, c]

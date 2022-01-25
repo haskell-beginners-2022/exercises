@@ -31,8 +31,9 @@ module Lecture1
     , lowerAndGreater
     ) where
 import Data.Char (digitToInt)
-import Utils (count2, (!?))
+import Utils (count2)
 import Data.Maybe (mapMaybe)
+import Relude ((!!?))
 
 {- | Specify the type signature of the following function. Think about
 its behaviour, possible types for the function arguments and write the
@@ -115,7 +116,7 @@ string.
 -}
 subString :: Int -> Int -> [a] -> [a]
 -- Get all the items at those indexes, drop the ones that don't exist (@mapMaybe@ filters out the @Nothing@s and converts @Just a@s into @a@s)
-subString start end str = mapMaybe (str !?) [start..end]
+subString start end str = mapMaybe (str !!?) [start..end]
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.

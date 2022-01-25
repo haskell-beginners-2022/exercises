@@ -27,13 +27,17 @@ lecture3Spec = describe "Lecture 3" $ do
         it "Sunday"    $ toShortString Sunday    `shouldBe` "Sun"
 
     describe "next" $ do
-        it "Monday"    $ next Monday    `shouldBe` Tuesday
-        it "Tuesday"   $ next Tuesday   `shouldBe` Wednesday
-        it "Wednesday" $ next Wednesday `shouldBe` Thursday
-        it "Thursday"  $ next Thursday  `shouldBe` Friday
-        it "Friday"    $ next Friday    `shouldBe` Saturday
-        it "Saturday"  $ next Saturday  `shouldBe` Sunday
-        it "Sunday"    $ next Sunday    `shouldBe` Monday
+        it "Monday"    $ next Monday      `shouldBe` Tuesday
+        it "Tuesday"   $ next Tuesday     `shouldBe` Wednesday
+        it "Wednesday" $ next Wednesday   `shouldBe` Thursday
+        it "Thursday"  $ next Thursday    `shouldBe` Friday
+        it "Friday"    $ next Friday      `shouldBe` Saturday
+        it "Saturday"  $ next Saturday    `shouldBe` Sunday
+        it "Sunday"    $ next Sunday      `shouldBe` Monday
+        it "True"      $ next True        `shouldBe` False
+        it "False"     $ next False       `shouldBe` True
+        it "10"        $ next (10 :: Int) `shouldBe` 11
+        it "'a'"       $ next 'a'         `shouldBe` 'b'
 
     describe "daysTo" $ do
         it "Monday -> Friday" $ daysTo Monday Friday `shouldBe` 4
@@ -73,10 +77,6 @@ lecture3Spec = describe "Lecture 3" $ do
         it "x y x" $ appendDiff3 [1] [2] [1] `shouldBe` [1, 2]
         it "x x x" $ appendDiff3 [1] [1] [1] `shouldBe` [1]
 
-{-
-
-!!! UNCOMMENT THE FOLLOWING SECTION FOR FOLDABLE/FUNCTOR TESTS !!!
-
     describe "Laws: Foldable" $ do
         it "List1" $ do
             lawsCheck (foldableLaws genList1With) `shouldReturn` True
@@ -88,7 +88,6 @@ lecture3Spec = describe "Lecture 3" $ do
             lawsCheck (functorLaws genList1With) `shouldReturn` True
         it "Treasure" $ do
             lawsCheck (functorLaws genTreasureWith) `shouldReturn` True
--}
 
 genSmallInt :: Gen Int
 genSmallInt = Gen.int (Range.linear 0 10)
