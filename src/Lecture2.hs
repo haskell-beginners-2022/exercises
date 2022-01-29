@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 {- |
 Module                  : Lecture2
 Copyright               : (c) 2021-2022 Haskell Beginners 2022 Course
@@ -39,6 +40,7 @@ module Lecture2
     , eval
     , constantFolding
     ) where
+import Text.Read
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -79,7 +81,7 @@ return the removed element.
 -}
 removeAt :: Int -> [a] -> (Maybe a, [a])
 removeAt x list =
-  if (length list <= x) || (x < 0)
+  if length list <= x || x < 0
     then (Nothing , list)
     else (Just(list!!x), take x list ++ drop (x + 1) list)
 
@@ -109,7 +111,7 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces :: [Char] -> [Char]
+dropSpaces :: String -> String
 dropSpaces [] = []
 dropSpaces (x : xs) = if x == ' '
   then dropSpaces xs
@@ -196,8 +198,8 @@ True
 isIncreasing :: [Int] -> Bool
 isIncreasing [] = True
 isIncreasing [_] = True
-isIncreasing (x : y : []) = x < y
-isIncreasing (x : y : xs) = (x < y) && isIncreasing xs
+isIncreasing [x, y] = x < y
+isIncreasing (x : y : xs) = x < y && isIncreasing xs
 
 
 
@@ -322,4 +324,32 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding (Lit int) = Lit int
+constantFolding (Var str) = Var str
+constantFolding (Add (Lit e1) (Lit e2)) = Lit (e1 + e2)
+constantFolding (Add (Var s) (Lit 0)) = Var s
+constantFolding (Add (Lit 0) (Var s)) = Var s
+constantFolding (Add (Var s) (Lit l)) = Add (Var s) (Lit l)
+constantFolding (Add (Lit l) (Var s)) = Add (Lit l) (Var s)
+constantFolding (Add e1 e2) = 
+  let
+    go :: ([String], Int) -> Expr -> ([String], Int)
+    go (varList, litSum) (Lit lit) = (varList, (litSum + lit))
+    go (varList, litSum) (Var var) = (var : varList, litSum)
+    go (varList, litSum) (Add (Lit lit1) (Lit lit2)) = (varList, litSum + lit1 + lit2)
+    go (varList, litSum) (Add (Var var1) (Var var2)) = (var1 : var2 : varList, litSum)
+    go (varList, litSum) (Add (Var var) (Lit lit)) = (var : varList, litSum + lit)
+    go (varList, litSum) (Add (Lit lit) (Var var)) = (var : varList, litSum + lit)
+    go state (Add e1 e2) = go (go state e1) e2
+
+    currentStateToExpr :: ([String], Int) -> Expr -> Expr
+    currentStateToExpr ([], 0) expr = expr
+    currentStateToExpr ([], litSum) expr = Add (Lit litSum) expr
+    currentStateToExpr (x : xs, litSum) expr = Add (Var x) (currentStateToExpr (xs, litSum) expr)
+
+    convert :: ([String], Int) -> Expr
+    convert ([], litSum) = Lit litSum
+    convert (x : xs, litSum) = currentStateToExpr (xs, litSum) (Var x)
+  in
+    convert (go ([], 0) (Add e1 e2))
+
