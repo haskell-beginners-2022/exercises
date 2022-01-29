@@ -12,3 +12,7 @@ Exercises for the Lecture 4 of the Haskell Beginners course.
 module Lecture4
     (
     ) where
+
+{- | If you need to import libraries, do it after this line ... -}
+
+{- | ... and before this line. Otherwise the test suite might fail -}
