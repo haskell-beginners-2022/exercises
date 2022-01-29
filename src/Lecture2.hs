@@ -300,7 +300,20 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval vars expr=
+  let
+    go :: Variables -> Expr -> Either EvalError Int
+    go vars (Lit lit) = Right lit 
+    go vars (Var var) = case (lookup var vars) of
+      Just value -> Right value
+      Nothing -> Left (VariableNotFound var)
+    go vars (Add e1 e2) = case (go vars e1) of 
+      Right val1 -> case (go vars e2) of
+        Right val2 -> Right (val2 + val1)
+        Left (VariableNotFound var) -> Left (VariableNotFound var)
+      Left (VariableNotFound var) -> Left (VariableNotFound var)
+  in
+    go vars (constantFolding expr)
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -324,13 +337,13 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding (Lit int) = Lit int
-constantFolding (Var str) = Var str
-constantFolding (Add (Lit e1) (Lit e2)) = Lit (e1 + e2)
-constantFolding (Add (Var s) (Lit 0)) = Var s
+constantFolding (Lit lit) = Lit lit
+constantFolding (Var var) = Var var
+constantFolding (Add (Lit lit1) (Lit lit2)) = Lit (lit1 + lit2)
+constantFolding (Add (Var var) (Lit 0)) = Var var
 constantFolding (Add (Lit 0) (Var s)) = Var s
-constantFolding (Add (Var s) (Lit l)) = Add (Var s) (Lit l)
-constantFolding (Add (Lit l) (Var s)) = Add (Lit l) (Var s)
+constantFolding (Add (Var var) (Lit lit)) = Add (Var var) (Lit lit)
+constantFolding (Add (Lit lit) (Var var)) = Add (Lit lit) (Var var)
 constantFolding (Add e1 e2) = 
   let
     go :: ([String], Int) -> Expr -> ([String], Int)
