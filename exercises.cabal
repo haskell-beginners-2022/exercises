@@ -71,6 +71,12 @@ library
                        Lecture3
                        Lecture4
 
+executable lecture4
+  import:              common-options
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  build-depends:       base, exercises
+
 test-suite exercises-test
   import:              common-options
   type:                exitcode-stdio-1.0
