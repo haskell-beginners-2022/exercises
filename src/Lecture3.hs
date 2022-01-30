@@ -34,7 +34,6 @@ module Lecture3
     , apply
     ) where
 
-import Data.List (nub)
 -- $setup
 -- >>> import Data.Semigroup
 
