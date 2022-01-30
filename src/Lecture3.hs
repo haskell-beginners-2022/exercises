@@ -197,8 +197,13 @@ together only different elements.
 Product {getProduct = 6}
 
 -}
-appendDiff3 :: (Monoid a, Eq a) => a -> a -> a -> a
-appendDiff3 a b c = mconcat $ nub [a, b, c]
+appendDiff3 :: (Semigroup a, Eq a) => a -> a -> a -> a
+appendDiff3 a b c
+  | a == b && a == c = a
+  | a == b && b /= c = a <> c
+  | a == c && b /= c = a <> b
+  | b == c           = a <> b
+  | otherwise = a <> b <> c
 
 {-
 
