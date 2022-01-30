@@ -27,11 +27,12 @@ Specifically:
 
   1. The first line contains names of columns.
   2. Each line contains exactly 3 comma-separated values.
-  3. The first value is a name of a product: a string containing any
-     characters except comma.
+  3. The first value is a name of a product: a non-empty string
+     containing any characters except comma.
   4. Second value is the type of trade. It' either a "Buy" or "Sell" string.
   5. The last, third value, is a non-negative integer number: the cost
      of the product.
+  6. Each value might be surrounded by any amount of spaces.
 
 Your program takes a path to a file and it should output several stats
 about all the trades. The list of parameters to output is always the
@@ -44,10 +45,10 @@ Total positions:       : 3
 Total final balance    : -15
 Biggest absolute cost  : 50
 Smallest absolute cost : 10
-Max spending           : 25
-Min spending           : 10
-Max earning            : 50
-Min earning            : 50
+Max earning            : 25
+Min earning            : 10
+Max spending           : 50
+Min spending           : 50
 Longest product name   : Pineapples
 
 
@@ -67,6 +68,7 @@ All possible content errors:
   * There might not be the first line with column names
   * Names of columns might be different
   * Each line can have less than 3 or more than 3 values
+  * The product name string can be empty
   * The second value might be different from "Buy" or "Sell"
   * The number can be negative or not integer or not even a number
 
@@ -83,6 +85,7 @@ module Lecture4
       -- * Types
     , TradeType (..)
     , Row (..)
+    , MaxLen (..)
     , Stats (..)
 
       -- * Internal functions
@@ -91,10 +94,12 @@ module Lecture4
     , combineRows
     , displayStats
     , calculateStats
+    , printProductStats
     ) where
 
 import Data.List.NonEmpty (NonEmpty (..))
-import Data.Semigroup (Max (..), Min (..), Sum (..))
+import Data.Semigroup (Max (..), Min (..), Semigroup (..), Sum (..))
+import Text.Read (readMaybe)
 
 {- In this exercise, instead of writing the entire program from
 scratch, you're offered to complete the missing parts.
@@ -108,7 +113,7 @@ First, let's define data types to represent a single row of our file.
 data TradeType
     = Buy
     | Sell
-    deriving (Show, Eq)
+    deriving (Show, Eq, Read)
 
 data Row = Row
     { rowProduct   :: String
@@ -120,6 +125,10 @@ data Row = Row
 Now you can implement a function that takes a String containing a single row and
 parses it. The only catch here is that the input string might have format
 errors. We will simply return an optional result here.
+
+🕯 HINT: You may need to implement your own function to split 'String' by 'Char'.
+
+🕯 HINT: Use the 'readMaybe' function from the 'Text.Read' module.
 -}
 
 parseRow :: String -> Maybe Row
@@ -158,10 +167,10 @@ data Stats = Stats
     , statsTotalSum       :: Sum Int
     , statsAbsoluteMax    :: Max Int
     , statsAbsoluteMin    :: Min Int
-    , statsSellMax        :: Max Int
-    , statsSellMin        :: Min Int
-    , statsBuyMax         :: Max Int
-    , statsBuyMin         :: Min Int
+    , statsSellMax        :: Maybe (Max Int)
+    , statsSellMin        :: Maybe (Min Int)
+    , statsBuyMax         :: Maybe (Max Int)
+    , statsBuyMin         :: Maybe (Min Int)
     , statsLongest        :: MaxLen
     } deriving (Show, Eq)
 
@@ -181,6 +190,10 @@ each row independently and then combine all stats into a single one.
 Write a function to convert a single 'Row' to 'Stats'. To implement this
 function, think about how final stats will look like if you have only a single
 row in the file.
+
+🕯 HINT: Since a single row can only be 'Buy' or 'Sell', you can't
+   populate both sell max/min and buy max/min values. In that case,
+   you can set the corresponding field to 'Nothing'.
 -}
 
 rowToStats :: Row -> Stats
@@ -191,7 +204,7 @@ Now, after we learned to convert a single row, we can convert a list of rows!
 
 However, we have a minor problem. Our 'Stats' data type doesn't have a
 'Monoid' instance and it couldn't have it! One reason for this is that
-there's no sensible "empty" value for maximum of two values. So we
+there's no sensible "empty" value for the longest product name. So we
 simply don't implement the 'Monoid' instance for 'Stats'.
 
 But the list of rows might be empty and we don't know what to return
@@ -215,6 +228,9 @@ combineRows = error "TODO"
 {-
 After we've calculated stats for all rows, we can then pretty-print
 our final result.
+
+If there's no some value (for example, there were not "Buy" products),
+you can return string "no value"
 -}
 
 displayStats :: Stats -> String
@@ -233,6 +249,8 @@ the file doesn't have any products.
 🕯 HINT: Ideally, the implementation of 'calculateStats' should be just a
    composition of several functions. Use already implemented functions, some
    additional standard functions and maybe introduce helper functions if you need.
+
+🕯 HINT: Have a look at 'mapMaybe' function from 'Data.Maybe' (you may need to import it).
 -}
 
 calculateStats :: String -> String
@@ -293,4 +311,5 @@ To understand whether your implementation is optimal, look at the following sign
      once as well.
   2. You don't use `length` to calculate the total number of rows.
   3. You use `foldl'` or something similar to combine rows instead of `sconcat`.
+  4. Add the {-# LANGUAGE StrictData #-} pragma to this module.
 -}
