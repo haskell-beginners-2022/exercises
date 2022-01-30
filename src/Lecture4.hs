@@ -13,6 +13,6 @@ module Lecture4
     (
     ) where
 
-{- | If you need to import libraries, do it after this line ... -}
+{- | VVV If you need to import libraries, do it after this line ... VVV -}
 
-{- | ... and before this line. Otherwise the test suite might fail -}
+{- | ^^^ and before this line. Otherwise the test suite might fail  ^^^ -}
