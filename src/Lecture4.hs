@@ -293,7 +293,7 @@ You should be proud of yourself 🤗
 
 For an extra challenge, you can make sure that your solution is optimally lazy
 and streaming. The course contains an additional executable
-"generate-big-products" that generates a 2GB file of products on run.
+"generate-many-products" that generates a 2GB file of products on run.
 
 > NOTE: Make sure you have enough disk space before running the generator and
 > make sure to delete the file afterwards to not to waste space
@@ -301,15 +301,21 @@ and streaming. The course contains an additional executable
 You can run this executable to produce a file like this:
 
 
-cabal run generate-big-products
+cabal run generate-many-products
 
 
-To understand whether your implementation is optimal, look at the following signs:
+> NOTE: Make sure you have enough disk space before running the generator and
+
+If you've implemented everything correctly, your solution already must be streaming!
+If not, have a look at the following signs:
 
   1. You traverse significant lists at most once in each function. In that case,
      due to laziness, composition of such functions will traverse the list only
      once as well.
   2. You don't use `length` to calculate the total number of rows.
-  3. You use `foldl'` or something similar to combine rows instead of `sconcat`.
+  3. GHC optimizations might not trigger. In that case, try replacing
+    `sconcat` with a manual recursive function with bang patterns on the
+    stats data type.
   4. Add the {-# LANGUAGE StrictData #-} pragma to this module.
+
 -}

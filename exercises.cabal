@@ -76,6 +76,12 @@ executable lecture4
   main-is:             Main.hs
   build-depends:       base, exercises
 
+executable generate-many-products
+  import:              common-options, common-exe
+  hs-source-dirs:      test/gen
+  main-is:             Main.hs
+  build-depends:       base, bytestring
+
 test-suite exercises-test
   import:              common-options, common-exe
   type:                exitcode-stdio-1.0
