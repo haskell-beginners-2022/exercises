@@ -47,8 +47,15 @@ zero, you can stop calculating product and return 0 immediately.
 >>> lazyProduct [4, 3, 7]
 84
 -}
+
+{- It's tail recursive :-) -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct lst = go 1 lst
+    where
+        go :: Int -> [Int] -> Int
+        go accu []       = accu
+        go accu (0 : xs) = 0
+        go accu (x : xs) = go (x * accu) xs
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -57,8 +64,10 @@ lazyProduct = error "TODO"
 >>> duplicate "cab"
 "ccaabb"
 -}
+{- Ok, this is really simple -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate [] = []
+duplicate (x: xs) = x : x : duplicate xs
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -70,7 +79,37 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt i list
+   | i < 0               = (Nothing, list)
+   | null list           = (Nothing, list)
+   | i == 0              = (Just (head list), tail list)
+   | otherwise =
+      let x = (removeAt (i-1) (tail list))
+         in case x of
+            (Nothing, list1)    -> (Nothing, list)
+            (Just value, list1) -> (Just value, head list : list1)
+
+
+{- This is simple, maybe too long -}
+{- removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt i list =
+   if i < 0
+      then
+         (Nothing, list)
+      else
+         let
+            l = length list
+         in
+            if i < l
+               then
+                 let left =  take i list
+                     right = drop i list
+                    in
+                       (Just(head right), left ++ (tail right))
+               else
+                 (Nothing, list) -}
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -81,7 +120,18 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+{-ok, this is quite straightforward -}
+evenLists :: [[a]] -> [[a]]
+evenLists = removeLenghts . selectEven . computeLenghts
+   where
+      computeLenghts :: [[a]] -> [([a], Int)]
+      computeLenghts list = map (\l -> (l, length l)) list
+
+      selectEven :: [([a], Int)] -> [([a], Int)]
+      selectEven list = filter (\x -> (even (snd x))) list
+
+      removeLenghts :: [([a], Int)] -> [[a]]
+      removeLenghts list = map (\x -> fst x) list
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -97,7 +147,21 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+
+dropSpaces :: [Char] -> [Char]
+dropSpaces  = leaveOnlyLetters . dropWhitespacesLeft
+   where
+      leaveOnlyLetters :: [Char] -> [Char]
+      leaveOnlyLetters s
+         | null s        = s
+         | head s /= ' ' = (head s) : (leaveOnlyLetters (tail s))
+         | otherwise     = []
+
+      dropWhitespacesLeft :: [Char] -> [Char]
+      dropWhitespacesLeft s
+         | null s        = s
+         | head s == ' ' = dropWhitespacesLeft (tail s)
+         | otherwise     = s
 
 {- |
 
@@ -160,7 +224,60 @@ data Knight = Knight
     , knightEndurance :: Int
     }
 
-dragonFight = error "TODO"
+{- It's a sum data type, ok, primitive but works -}
+data Dragon a =
+  RedDragon { dragonGold :: Int, dragonFirepower :: Int, dragonHealth :: Int, dragonTreasure :: a }
+  | BlackDragon { dragonGold :: Int, dragonFirepower :: Int, dragonHealth :: Int, dragonTreasure :: a }
+  | GreenDragon { dragonGold :: Int, dragonFirepower :: Int, dragonHealth :: Int }
+
+data FightResult a
+  = KnightWins { resultExp :: Int, resultGold :: Int, resultTreasure :: Maybe a }
+  | KnightLoses
+  {- No treasure, no gold, but I guess some exp -}
+  | KnightEscapes { resultExp :: Int }
+
+{- instance Show FightResult String where
+   show (KnightWins exp gold) = "KnightWins " ++ (show exp) ++ " experience " ++ (show gold) ++ " gold"
+   show KnightLoses = "KnightLoses"
+   show (KnightEscapes exp) = "KnightEscapes " ++ (show exp) ++ " experience" -}
+
+min3 :: Int -> Int -> Int -> Int
+min3 x y z = min (min x y) z
+
+dragonFight :: Dragon a -> Knight -> FightResult a
+dragonFight dragon knight =
+   let
+      {- How many attacks until knight is killed ? -}
+      numAttacksToGetKilled = (ceiling (fromIntegral (knightHealth knight)/fromIntegral (dragonFirepower dragon))) * 10
+
+      {- How many attacks until the knight is exhausted ? -}
+      numAttacksToBecomeTired = knightEndurance knight
+
+      {- How many attacks until the knight wins ? -}
+      numAttacksToWin = ceiling (fromIntegral (dragonHealth dragon)/fromIntegral (knightAttack knight))
+
+      {- How long will the epic fight last ? -}
+      numAttacksUntilEnd = min3 numAttacksToGetKilled numAttacksToBecomeTired numAttacksToWin
+
+      knLoses = numAttacksToGetKilled == numAttacksUntilEnd
+      knEscapes = numAttacksToBecomeTired == numAttacksUntilEnd
+      knWins = numAttacksToWin == numAttacksUntilEnd
+      exp = case dragon of
+         RedDragon _ _ _ _   -> 100
+         BlackDragon _ _ _ _ -> 150
+         GreenDragon _ _ _   -> 250
+      treasure = case dragon of
+         RedDragon _ _ _ t   -> Just t
+         BlackDragon _ _ _ t -> Just t
+         GreenDragon _ _ _   -> Nothing
+   in case () of
+    _ | knLoses   -> KnightLoses
+      | knEscapes -> KnightEscapes exp
+      | knWins    -> KnightWins exp (dragonGold dragon) treasure
+
+{- Overall, the dragon task solution is not very sophisticeted. I'm more happy with compiler stuff :-) -}
+
+
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -180,8 +297,11 @@ False
 >>> isIncreasing [1 .. 10]
 True
 -}
+{- Ok, this is rather straightforward. I wonder where's the catch ? -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing []         = True
+isIncreasing [x]        = True
+isIncreasing (x : xs)   = x < (head xs) && (isIncreasing xs)
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -193,8 +313,13 @@ verify that.
 >>> merge [1, 2, 4] [3, 7]
 [1,2,3,4,7]
 -}
+{- ok quite easy -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] bs = bs
+merge as [] = as
+merge (a : as) (b : bs)
+   | a < b     = a : merge as (b:bs)
+   | otherwise = b : merge (a:as) (bs)
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -210,8 +335,16 @@ The algorithm of merge sort is the following:
 >>> mergeSort [3, 1, 2]
 [1,2,3]
 -}
+{- ok, no real problems here ! -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort []   = []
+mergeSort [x]  = [x]
+mergeSort list =
+   let l          = length list
+       leftLen    = (div l 2)
+       leftHalf   = take leftLen list
+       rightHalf  = drop leftLen list
+   in  merge (mergeSort leftHalf) (mergeSort rightHalf)
 
 
 {- | Haskell is famous for being a superb language for implementing
@@ -264,7 +397,20 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval vars expr = case expr of
+     Lit value -> Right value
+     Var varName ->
+        let varValue = lookup varName vars
+        in case varValue of
+          Nothing    -> Left (VariableNotFound varName)
+          Just value -> Right value
+     {- I am sure there is more elegant solution, sth like Reactor zip / Mutiny combine -}
+     Add expr1 expr2 ->
+        let res1 = eval vars expr1
+            res2 = eval vars expr2
+        in case res1 of
+           Right r1      -> fmap (\r2 -> r2 + r1) res2
+           Left error    -> Left error
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -287,5 +433,54 @@ x + 45 + y
 Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
+{- I think the simplest form possible here is (optionally) a constant, and a list of variables -}
+{- So I'm going to traverse the tree, collecting the literal value and vars to get the simplest form -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding expr = case simplifyExpr expr of
+   (Nothing, Nothing) -> Lit 0
+   (Just v1, Nothing) -> Lit v1
+   (Nothing, Just e2) -> e2
+   (Just v1, Just e2) -> Add (Lit v1) e2
+
+{- Auxiliary function - processes the tree recursively, bubbling up the constant and isolating the rest of expression-}
+simplifyExpr :: Expr -> (Maybe Int, Maybe Expr)
+simplifyExpr expr = case expr of
+   Lit 0     -> (Nothing, Nothing)
+   Lit value -> (Just value, Nothing)
+   Var v     -> (Nothing, Just expr)
+   Add expr1 expr2 -> let
+      res1 = simplifyExpr expr1
+      res2 = simplifyExpr expr2
+      joinedValues = joinValues (fst res1) (fst res2)
+      joinedExpressions = joinExpressions (snd res1) (snd res2)
+      in case joinedValues of
+        Nothing -> (Nothing, joinedExpressions)
+        Just 0  -> (Nothing, joinedExpressions)
+        Just v  -> (Just v, joinedExpressions)
+
+joinValues :: Maybe Int -> Maybe Int -> Maybe Int
+joinValues = join (\x y -> x+y)
+
+joinExpressions :: Maybe Expr -> Maybe Expr -> Maybe Expr
+joinExpressions = join (\x y -> Add x y)
+
+{- An approach to construct a "linker" of two Maybes -}
+join :: (a -> a -> a) -> Maybe a -> Maybe a -> Maybe a
+join link m1 m2 = case (m1, m2) of
+   (Nothing, Nothing) -> Nothing
+   (Just m1, Nothing) -> Just m1
+   (Nothing, Just m2) -> Just m2
+   (Just m1, Just m2) -> Just (link m1 m2)
+
+{- It was the first approach: joinValues and joinExpressions functions. It works, but they are too similar to leave them like that-}
+{-joinValues v1 v2 = case (v1, v2) of
+   (Nothing, Nothing) -> Nothing
+   (Just v1, Nothing) -> Just v1
+   (Nothing, Just v2) -> Just v2
+   (Just v1, Just v2) -> Just (v1 + v2) -}
+
+{- joinExpressions e1 e2 = case (e1, e2) of
+   (Nothing, Nothing) -> Nothing
+   (Just e1, Nothing) -> Just e1
+   (Nothing, Just e2) -> Just e2
+   (Just e1, Just e2) -> Just (Add e1 e2) -}
