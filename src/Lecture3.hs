@@ -93,7 +93,10 @@ weekday to the second.
 5
 -}
 daysTo :: (Eq a, Bounded a, Enum a) => a -> a -> Int
-daysTo a b = length $ takeWhile (/= b) $ iterate next a
+-- daysTo a b = length $ takeWhile (/= b) $ iterate next a
+daysTo a b = let ia = fromEnum a
+                 ib = fromEnum b
+             in if ia > ib then 7 - ia + ib else ib - ia
 
 {-
 
