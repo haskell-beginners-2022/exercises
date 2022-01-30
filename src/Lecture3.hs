@@ -134,7 +134,7 @@ instance Semigroup Reward where
 
 instance Monoid Reward where
   mempty :: Reward
-  mempty = Reward (Gold 0) False
+  mempty = Reward mempty False
 
 {- | 'List1' is a list that contains at least one element.
 -}
@@ -144,7 +144,7 @@ data List1 a = List1 a [a]
 -- | This should be list append.
 instance Semigroup (List1 a) where
   (<>) :: List1 a -> List1 a -> List1 a
-  List1 fa ra <> List1 fb rb = List1 fa (ra ++ [fb] ++ rb)
+  List1 fa ra <> List1 fb rb = List1 fa (ra ++ fb : rb)
 
 {- | Does 'List1' have the 'Monoid' instance? If no then why?
 
