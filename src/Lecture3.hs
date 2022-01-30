@@ -240,9 +240,7 @@ types that can have such an instance.
 -- Impossible, Foldable needs kind * -> *, is of kind *
 instance Foldable List1 where
   foldMap :: Monoid b => (a -> b) -> List1 a -> b
-  foldMap f (List1 a [])     = f a
-  foldMap f (List1 a [b])    = f a <> f b
-  foldMap f (List1 a (b:bs)) = f a <> foldMap f (List1 b bs)
+  foldMap f (List1 a bs)  = f a <> foldMap f bs
 
   foldr :: (a -> b -> b) -> b -> List1 a -> b
   foldr f z (List1 a [])     = f a z
