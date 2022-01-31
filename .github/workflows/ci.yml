@@ -184,3 +184,29 @@ jobs:
     - name: Lecture 3 - Tests
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 3"
+
+  lecture4:
+    name: Lecture 4
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cabal: ["3.6.2.0"]
+        ghc: ["8.10.7"]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: haskell/actions/setup@v1
+      name: Setup Haskell
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
+
+    - uses: actions/cache@v2
+      name: Cache ~/.cabal/store
+      with:
+        path: ~/.cabal/store
+        key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
+
+    - name: Lecture 4 - Unit Tests
+      run: |
+        cabal run exercises-test --enable-tests -- -m "Lecture 4"
