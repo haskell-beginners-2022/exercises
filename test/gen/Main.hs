@@ -15,7 +15,7 @@ main = do
     putStrLn "Huge file is generated on path: test/gen/big.csv"
 
 exampleRows :: [LBS.ByteString]
-exampleRows =
+exampleRows = map (<> "\n")
     [ "Orange,Buy,10"
     , "Meat,Buy,30"
     , "Strawberry,Buy,100"
