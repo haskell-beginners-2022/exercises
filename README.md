@@ -17,12 +17,7 @@ corresponding name (e.g. `Lecture1.hs`).
 
 These exercises were created specifically for the Haskell Beginners
 2022 course. You can expect to get feedback on your solutions if you
-meet the following deadlines:
-
-* `Lecture1.hs`: Jan 17, 2022, 23:59:59 GMT
-* `Lecture2.hs`: Jan 24, 2022, 23:59:59 GMT
-* `Lecture3.hs`: Jan 31, 2022, 23:59:59 GMT
-* `Lecture4.hs`: Feb  7, 2022, 23:59:59 GMT
+submit them before **28 February 2022, 23:59:59 GMT**.
 
 ## Working with the course
 

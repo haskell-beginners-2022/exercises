@@ -72,6 +72,8 @@ lecture3Spec = describe "Lecture 3" $ do
         it "x x z" $ appendDiff3 [1] [1] [3] `shouldBe` [1, 3]
         it "x y x" $ appendDiff3 [1] [2] [1] `shouldBe` [1, 2]
         it "x x x" $ appendDiff3 [1] [1] [1] `shouldBe` [1]
+        it "Checks duplicates only for original values" $
+            appendDiff3 [1] [2] [1, 2] `shouldBe` [1, 2, 1, 2]
 
 {-
 

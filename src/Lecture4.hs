@@ -306,16 +306,47 @@ cabal run generate-many-products
 
 > NOTE: Make sure you have enough disk space before running the generator and
 
-If you've implemented everything correctly, your solution already must be streaming!
-If not, have a look at the following signs:
+Laziness in Haskell is a double-edged sword. On one hand, it leads to
+more composable code and automatic streaming in most cases. On the
+other hand, it's easy to introduce space leaks if you're not being
+careful.
 
-  1. You traverse significant lists at most once in each function. In that case,
-     due to laziness, composition of such functions will traverse the list only
-     once as well.
-  2. You don't use `length` to calculate the total number of rows.
-  3. GHC optimizations might not trigger. In that case, try replacing
-    `sconcat` with a manual recursive function with bang patterns on the
-    stats data type.
-  4. Add the {-# LANGUAGE StrictData #-} pragma to this module.
+The naive and straightforward implementation of this task most likely
+contains space leaks. To implement the optimal streaming and laziness
+solution, consider doing the following improvements:
+
+  1. Enable the {-# LANGUAGE StrictData #-} pragma to this module.
+
+     * Fields in Haskell data types are lazy by default. So, when
+       combining 'Stats' with <>, fields on the new 'Stats' value are
+       not fully-evaluated. Enabling 'StrictData' fixes this.
+
+  2. Make sure you traverse the list of all products only once in each
+     function. In that case, due to laziness, composition of such
+     functions will traverse the list only once as well.
+
+     * You can traverse each separate line multiple times because each
+       individual line in the file is short and traversing it only
+       once won't bring lots of performance improvements.
+
+  3. Don't use 'length' to calculate the total number of rows.
+
+  4. Replace 'sconcat' in 'combineRows' with a manual recursive
+     function using {-# LANGUAGE BangPatterns #-} on the 'Stats'
+     accumulator argument.
+
+     * 'sconcat' is a lazy function. So, even if you force every field
+       of the 'Stats' data type with 'StrictData', it won't make
+       different if you don't force the 'Stats' accumulator itself.
+
+  5. Combine fields of type 'Maybe' in the 'Stats' data type with a
+     stricter version of '<>'.
+
+     * The 'Semigroup' instance for 'Maybe' (that you've probably used
+       for implementing the 'Semigroup' instance for 'Stats') is lazy
+       and doesn't force values inside 'Just' constructors. To fix
+       this problem, you can use a custom function that combines two
+       values of type 'Maybe' and pattern matches on @Just !x@ to
+       ensure that values inside 'Just' are forced.
 
 -}
