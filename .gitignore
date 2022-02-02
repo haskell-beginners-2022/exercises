@@ -26,6 +26,9 @@ cabal.project.local
 .stack-work/
 stack.yaml.lock
 
+# Tests
+big.csv
+
 ### IDE/support
 # Vim
 [._]*.s[a-v][a-z]
