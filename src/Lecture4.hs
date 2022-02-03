@@ -33,6 +33,9 @@ Specifically:
   5. The last, third value, is a non-negative integer number: the cost
      of the product.
   6. Each value might be surrounded by any amount of spaces.
+  7. You don't need to trim spaces in the product name. But you need
+     to parse the other two values even if they contain leading and
+     trailing spaces.
 
 Your program takes a path to a file and it should output several stats
 about all the trades. The list of parameters to output is always the
@@ -293,18 +296,16 @@ You should be proud of yourself 🤗
 
 For an extra challenge, you can make sure that your solution is optimally lazy
 and streaming. The course contains an additional executable
-"generate-many-products" that generates a 2GB file of products on run.
+"generate-many-products" that generates a 2GB file of products.
 
 > NOTE: Make sure you have enough disk space before running the generator and
 > make sure to delete the file afterwards to not to waste space
 
-You can run this executable to produce a file like this:
+To run the executable that produces a huge file, use the following command:
 
 
 cabal run generate-many-products
 
-
-> NOTE: Make sure you have enough disk space before running the generator and
 
 Laziness in Haskell is a double-edged sword. On one hand, it leads to
 more composable code and automatic streaming in most cases. On the
@@ -331,13 +332,13 @@ solution, consider doing the following improvements:
 
   3. Don't use 'length' to calculate the total number of rows.
 
-  4. Replace 'sconcat' in 'combineRows' with a manual recursive
-     function using {-# LANGUAGE BangPatterns #-} on the 'Stats'
-     accumulator argument.
+  4. Replace 'sconcat' in 'combineRows' with foldl' or manual recursive
+     function using {-# LANGUAGE BangPatterns #-} and strict
+     accumulator of type 'Stats'.
 
      * 'sconcat' is a lazy function. So, even if you force every field
-       of the 'Stats' data type with 'StrictData', it won't make
-       different if you don't force the 'Stats' accumulator itself.
+       of the 'Stats' data type with 'StrictData', it won't make a
+       difference if you don't force the 'Stats' accumulator itself.
 
   5. Combine fields of type 'Maybe' in the 'Stats' data type with a
      stricter version of '<>'.
@@ -347,6 +348,25 @@ solution, consider doing the following improvements:
        and doesn't force values inside 'Just' constructors. To fix
        this problem, you can use a custom function that combines two
        values of type 'Maybe' and pattern matches on @Just !x@ to
-       ensure that values inside 'Just' are forced.
+       ensure that values inside 'Just' are fully-evaluated on each
+       step.
+
+
+You can check memory usage of your program by running `htop` in a
+separate terminal window. If you see that the memory usage doesn't
+grow indefinitely by eating all your RAM, it means that the solution
+requires constant-size memory.
+
+Additionally, on Linux, you can run the following command to see the
+actual size of required memory during your program execution:
+
+
+/usr/bin/time -v cabal run lecture4 -- test/gen/big.csv
+
+
+You can expect the optimal lazy solution to run in ~20 minutes and
+consume ~200 MB of RAM. The numbers are not the best and there's lots
+of room for optimization! But at least you've managed to implement a
+streaming solution using only basic Haskell 🤗
 
 -}
