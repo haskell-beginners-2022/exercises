@@ -31,7 +31,7 @@ lecture4Spec = describe "Lecture 4" $ do
             }
 
         it "Ignores spaces in line" $ parseRow "  Apples  ,  Sell  , 7 " `shouldBe` Just Row
-            { rowProduct   = "  Apples  "
+            { rowProduct   = "Apples"
             , rowTradeType = Sell
             , rowCost      = 7
             }
