@@ -56,6 +56,8 @@ lecture3Spec = describe "Lecture 3" $ do
     describe "List1" $ do
         it "Laws: Semigroup" $
             lawsCheck (semigroupLaws genList1) `shouldReturn` True
+        it "Includes first element of second list" $
+            List1 1  [2,3] <> List1 4 [5, 6] `shouldBe` List1 1 [2, 3, 4, 5, 6]
 
     describe "Treasure" $ do
         it "Laws: Semigroup" $
