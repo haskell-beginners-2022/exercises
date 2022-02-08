@@ -261,7 +261,7 @@ baseStats r = Stats { statsTotalPositions = 1
                     , statsSellMin = Nothing
                     , statsBuyMax = Nothing
                     , statsBuyMin = Nothing
-                    , statsLongest = MaxLen (rowProduct r)
+                    , statsLongest = MaxLen $ rowProduct r
                     }
 
 withBuy :: Stats -> Row -> Stats
