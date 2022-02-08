@@ -1,4 +1,6 @@
+{-# LANGUAGE BangPatterns      #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE StrictData        #-}
 {- |
 Module                  : Lecture4
 Copyright               : (c) 2021-2022 Haskell Beginners 2022 Course
@@ -102,7 +104,7 @@ module Lecture4
     ) where
 
 import Data.List (intercalate, uncons)
-import Data.List.NonEmpty (NonEmpty (..))
+import Data.List.NonEmpty (NonEmpty (..), fromList)
 import Data.List.Split (splitOn)
 import Data.Maybe (mapMaybe)
 import Data.Semigroup (Max (..), Min (..), Semigroup (..), Sum (..))
@@ -156,22 +158,17 @@ parseCosts cs = let mc = readMaybe cs
                   Nothing -> Nothing
 
 parseRow :: String -> Maybe Row
--- parseRow s = let parts = splitOn "," s
---                  prod = readMaybe (show (head parts)) :: Maybe String
---                  tradeType = readMaybe (parts !! 1) :: Maybe TradeType
---                  cost = readMaybe (parts !! 2) :: Maybe Int
-parseRow s = do
-           let parts = splitOn "," s
-           case length parts of
-             3 -> do
-               (pp, r1) <- uncons parts
-               (ttp, r2) <- uncons r1
-               (cp, _) <- uncons r2
-               p <- parseProduct pp
-               tt <- parseTradeType ttp
-               c <- parseCosts cp
-               return Row { rowProduct = p, rowTradeType = tt, rowCost = c }
-             _ -> Nothing
+parseRow s = let parts = splitOn "," s
+             in case length parts of
+               3 -> do
+                 (pp, r1) <- uncons parts
+                 (ttp, r2) <- uncons r1
+                 (cp, _) <- uncons r2
+                 p <- parseProduct pp
+                 tt <- parseTradeType ttp
+                 c <- parseCosts cp
+                 return Row { rowProduct = p, rowTradeType = tt, rowCost = c }
+               _ -> Nothing
 
 {-
 We have almost all we need to calculate final stats in a simple and
@@ -222,15 +219,22 @@ The 'Stats' data type has multiple fields. All these fields have
 instance for the 'Stats' type itself.
 -}
 
+-- <!> defines a strict version of <> for the Maybe type.
+(<!>) :: Semigroup a => Maybe a -> Maybe a -> Maybe a
+Nothing   <!> Nothing   = Nothing
+(Just !x) <!> Nothing   = Just x
+Nothing   <!> (Just !y) = Just y
+(Just !x) <!> (Just !y) = Just (x <> y)
+
 instance Semigroup Stats where
   a <> b = Stats { statsTotalPositions = statsTotalPositions a <> statsTotalPositions b
                  , statsTotalSum = statsTotalSum a <> statsTotalSum b
                  , statsAbsoluteMax = statsAbsoluteMax a <> statsAbsoluteMax b
                  , statsAbsoluteMin = statsAbsoluteMin a <> statsAbsoluteMin b
-                 , statsSellMax = statsSellMax a <> statsSellMax b
-                 , statsSellMin = statsSellMin a <> statsSellMin b
-                 , statsBuyMax = statsBuyMax a <> statsBuyMax b
-                 , statsBuyMin = statsBuyMin a <> statsBuyMin b
+                 , statsSellMax = statsSellMax a <!> statsSellMax b
+                 , statsSellMin = statsSellMin a <!> statsSellMin b
+                 , statsBuyMax = statsBuyMax a <!> statsBuyMax b
+                 , statsBuyMin = statsBuyMin a <!> statsBuyMin b
                  , statsLongest = statsLongest a <> statsLongest b
                  }
 
@@ -262,8 +266,8 @@ baseStats r = Stats { statsTotalPositions = 1
 
 withBuy :: Stats -> Row -> Stats
 withBuy s r = s { statsTotalSum = Sum $ rowCost r * (-1)
-                , statsBuyMax = Just $ Max $ rowCost r
-                , statsBuyMin = Just $ Min $ rowCost r
+                , statsBuyMax = Just . Max $ rowCost r
+                , statsBuyMin = Just . Min $ rowCost r
                 }
 
 withSell :: Stats -> Row -> Stats
@@ -302,7 +306,9 @@ implement the next task.
 -}
 
 combineRows :: NonEmpty Row -> Stats
-combineRows rs = sconcat $ fmap rowToStats rs
+combineRows (r :| [])      = rowToStats r
+combineRows (r :| [r'])    = rowToStats r <> rowToStats r'
+combineRows (r :| (r':rs)) = rowToStats r <> combineRows (r' :| rs)
 
 {-
 After we've calculated stats for all rows, we can then pretty-print
@@ -343,7 +349,7 @@ the file doesn't have any products.
 -}
 
 calculateStats :: String -> String
-calculateStats ls = displayStats $ foldr1 (<>) $ map rowToStats $ mapMaybe parseRow $ lines ls
+calculateStats ls = displayStats . combineRows . fromList . mapMaybe parseRow $ lines ls
 
 {- The only thing left is to write a function with side-effects that
 takes a path to a file, reads its content, calculates stats and prints
