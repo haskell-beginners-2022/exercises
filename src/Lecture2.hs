@@ -16,6 +16,11 @@ Unlike exercises to Lecture 1, this module also contains more
 challenging exercises. You don't need to solve them to finish the
 course but you can if you like challenges :)
 -}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use newtype instead of data" #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
 
 module Lecture2
     ( -- * Normal
@@ -37,11 +42,12 @@ module Lecture2
     , Variables
     , EvalError (..)
     , eval
-    , constantFolding
-    ) where
+    , constantFolding) where
 
 -- VVV If you need to import libraries, do it after this line ... VVV
-
+-- VVV If you need to import libraries, do it after this line ... VVV
+import Data.Either ( fromRight, isLeft )
+import Data.Char (isSpace)
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 {- | Implement a function that finds a product of all the numbers in
@@ -52,7 +58,13 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct = prod 1
+  where
+    prod :: Int -> [Int] -> Int
+    prod acc [] = acc
+    prod acc (x: xs)
+      | x == 0 = 0
+      | otherwise = prod (acc * x) xs
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -62,7 +74,7 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate = concatMap (replicate 2)
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -74,7 +86,16 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt _ [] = (Nothing, [])
+removeAt n (x:xs)
+  | n < 0 = (Nothing , x:xs)
+  | n == 0 = (Just x, xs)
+  | otherwise = mergeResultTuple (Nothing , [x]) (removeAt (n -1) xs)
+
+mergeResultTuple :: (Maybe a, [a]) -> (Maybe a, [a]) -> (Maybe a, [a])
+mergeResultTuple (Nothing, l1) (Just a, l2) = (Just a, l1 ++ l2)
+mergeResultTuple (Nothing, l1) (Nothing, l2) = (Nothing, l1 ++ l2)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -85,7 +106,16 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists [] = []
+evenLists [[]] = [[]]
+evenLists (x:xs) = filterEven x ++ evenLists xs
+
+filterEven :: [a] -> [[a]]
+filterEven [] = [[]]
+filterEven l
+    | even (length l) = [l]
+    | otherwise  = []
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -101,7 +131,8 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: String -> String
+dropSpaces = filter (not.isSpace).take 1024
 
 {- |
 
@@ -163,8 +194,90 @@ data Knight = Knight
     , knightAttack    :: Int
     , knightEndurance :: Int
     }
+    deriving (Show)
 
-dragonFight = error "TODO"
+data Dragon = Dragon
+    { dragonHealth     :: Int
+    , dragonExpReward :: Int
+    , dragonFirePower  :: Int
+    }
+    deriving (Show)
+
+--type GreenDragon = Dragon
+--type RedDragon   = Dragon
+--type BlackDragon = Dragon
+
+data Chest a = Chest
+    { chestGold     :: Int
+    , chestTreasure :: a
+    }
+    deriving (Show)
+
+data Armor = Armo
+    { armorDefence :: Int
+    , armorCost    :: Int
+    }
+    deriving (Show)
+
+data Sword = Sword
+    { swordImpact :: Int
+    , swordCost   :: Int
+    }
+    deriving (Show)
+
+data Artifact = Artifact
+    { artifactBoost :: Int
+    , artifactCost  :: Int
+    }
+    deriving (Show)
+
+data Gemstone = Gemstone
+    {
+      gemstoneCost :: Int
+    }
+    deriving (Show)
+
+type BronzeChest = Chest Armor
+type SilverChest = Chest (Sword, Armor)
+type GoldenChest = Chest (Artifact, Sword, [Gemstone])
+
+
+data RewardChest
+  = Bronze BronzeChest
+  | Silver SilverChest
+  | Golden GoldenChest
+  deriving (Show)
+
+data FightResult
+  = KnightWin
+  | DragonWin
+  | KnightRunAway
+  deriving (Show)
+
+dragonFight :: Dragon -> Knight -> FightResult
+dragonFight = turn 1
+  where
+  turn :: Int -> Dragon -> Knight -> FightResult
+  turn cnt dragon knight
+    | dragonHealth    dragon <= 0 = KnightWin
+    | knightHealth    knight <= 0 = DragonWin
+    | knightEndurance knight == 0 = KnightRunAway
+    | otherwise =
+      if mod cnt 10 == 0
+      then turn (cnt + 1) (dragonHit dragon (knightAttack knight)) (khightHit knight (dragonFirePower dragon))
+      else turn (cnt + 1) (dragonHit dragon (knightAttack knight)) (khightHit knight 0)
+
+dragonHit :: Dragon -> Int -> Dragon
+dragonHit d atk =
+  Dragon { dragonHealth = dragonHealth d - atk
+  , dragonExpReward = dragonExpReward d
+  , dragonFirePower = dragonFirePower d }
+
+khightHit :: Knight -> Int -> Knight
+khightHit k atk =
+  Knight {knightAttack = knightAttack k
+  , knightEndurance = knightEndurance k - 1
+  , knightHealth = knightHealth k - atk}
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -185,7 +298,15 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = True
+isIncreasing (x:xs) = isLess x xs
+  where
+  isLess :: Int -> [Int] -> Bool
+  isLess _ [] = True
+  isLess n (x: xs)
+    | n > x = False
+    | otherwise = isLess x xs
+
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -198,7 +319,13 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] [] = []
+merge [] l = l
+merge l [] = l
+merge (x1: xs1) (x2: xs2)
+  | x1 > x2 = x2 : merge (x1: xs1) xs2
+  | x1 < x2 = x1 : merge xs1 (x2: xs2)
+  | otherwise = [x1, x1] ++ merge xs1 xs2
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -215,7 +342,13 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort l
+      | length l < 2 = l
+      | otherwise =
+        let
+          sl = splitAt (div (length l) 2) l
+        in merge (mergeSort (fst sl)) (mergeSort (snd sl))
+
 
 
 {- | Haskell is famous for being a superb language for implementing
@@ -268,7 +401,23 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval _ (Lit n) = Right n
+eval l (Add a b) =
+  let
+   expRes1 = eval l a
+   expRes2 = eval l b
+  in sumExpRes expRes1 expRes2
+eval l (Var s) =
+  let
+    varVal = lookup s l
+  in
+    maybe (Left (VariableNotFound s)) Right varVal
+
+sumExpRes :: Either EvalError Int -> Either EvalError Int -> Either EvalError Int
+sumExpRes expRes1 expRes2
+    | isLeft expRes1 = expRes1
+    | isLeft expRes2 = expRes2
+    | otherwise = Right (fromRight 0 expRes1 + fromRight 0 expRes2)
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -292,4 +441,72 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding expr =
+  let
+    decomposeExpr = exprDecompose expr
+  in uncurry exprCompose decomposeExpr
+
+exprDecompose :: Expr -> ([Expr], [Expr])
+exprDecompose (Lit n) = ([], [Lit n])
+exprDecompose (Var v) = ([Var v], [])
+exprDecompose (Add x xs)
+  | isVar x && isVar xs = ([x, xs], [])
+  | isVar x && isLit xs = ([x], [xs])
+  | isLit x && isVar xs = ([xs], [x])
+  | isLit x && isLit xs = ([], [x, xs])
+  | isAdd x && isLit xs = mergeDecmpExprTuple ([],[xs]) (exprDecompose x)
+  | isAdd x && isVar xs = mergeDecmpExprTuple ([xs], []) (exprDecompose x)
+  | isAdd x && isAdd xs = mergeDecmpExprTuple (exprDecompose x) (exprDecompose xs)
+  | otherwise = ([],[])
+
+mergeDecmpExprTuple ::  ([Expr], [Expr]) -> ([Expr], [Expr]) -> ([Expr], [Expr])
+mergeDecmpExprTuple (x, xs) (y, ys) = (mergeExprList x y, mergeExprList xs ys)
+
+mergeExprList :: [Expr] -> [Expr] -> [Expr]
+mergeExprList [] ys = ys
+mergeExprList (x:xs) ys = x:mergeExprList ys xs
+
+exprCompose :: [Expr] -> [Expr] -> Expr
+exprCompose [] [] = Lit 0
+exprCompose (x:xs) [] = sumVarExpr (x:xs)
+exprCompose [] (x:xs) = sumLitExpr (x:xs)
+exprCompose (x:xs) (y:ys) =
+  let
+    sumVar = sumVarExpr (x:xs)
+    sumLit = sumLitExpr (y:ys)
+  in sumVarSumLitExpr sumVar sumLit
+
+sumVarExpr :: [Expr] -> Expr
+sumVarExpr (x:xs)
+  | null xs = x
+  | otherwise = Add (sumVarExpr xs) x
+
+sumLitExpr :: [Expr] -> Expr
+sumLitExpr (x:xs)
+  | null xs = x
+  | otherwise = sumLitExpr' (getIntFromLit x) xs
+
+sumLitExpr' :: Int -> [Expr] -> Expr
+sumLitExpr' n (x:xs)
+  | null xs = Lit (n + getIntFromLit x)
+  | otherwise = sumLitExpr' (getIntFromLit x) xs
+
+sumVarSumLitExpr :: Expr -> Expr -> Expr
+sumVarSumLitExpr v l
+  | getIntFromLit l == 0 = v
+  | otherwise = Add v l
+
+isAdd :: Expr -> Bool
+isAdd (Add _ _) = True
+isAdd _         = False
+
+isVar :: Expr -> Bool
+isVar (Var _) = True
+isVar _       = False
+
+isLit :: Expr -> Bool
+isLit (Lit _) = True
+isLit _       = False
+
+getIntFromLit :: Expr -> Int
+getIntFromLit (Lit n) = n
