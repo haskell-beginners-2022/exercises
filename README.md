@@ -67,7 +67,7 @@ mentors of the course.
 > PRs to your repository, you can eventually merge all the solutions
 > and enjoy green all-passing CI 🍏
 
-To open a PR to your fork, you need to change _base repository_ to
+To open a PR to your fork (here), you need to change _base repository_ to
 your own repository, as shown on the screenshot below:
 
 ![PR to fork example](https://user-images.githubusercontent.com/4276606/147921946-e9b84424-e76f-4f7a-8976-e33564ae1532.png)
