@@ -1,4 +1,4 @@
-cabal-version:       2.4
+cabal-version:       3.0
 name:                exercises
 version:             0.0.0.0
 synopsis:            Exercises for the Haskell Beginners 2022 course
@@ -11,7 +11,7 @@ license:             MPL-2.0
 license-file:        LICENSE
 author:              Haskell Beginners 2022 Course
 maintainer:          Haskell Beginners 2022 Course <haskell.beginners2022@gmail.com>
-copyright:           2021 Haskell Beginners 2022 Course
+copyright:           2021-2022 Haskell Beginners 2022 Course
 build-type:          Simple
 extra-doc-files:     README.md
                      CHANGELOG.md
