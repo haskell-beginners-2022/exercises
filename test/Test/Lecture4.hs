@@ -90,7 +90,7 @@ lecture4Spec = describe "Lecture 4" $ do
             }
 
     let stringStats =
-            [ "Total positions:       : 3"
+            [ "Total positions        : 3"
             , "Total final balance    : -15"
             , "Biggest absolute cost  : 50"
             , "Smallest absolute cost : 10"
