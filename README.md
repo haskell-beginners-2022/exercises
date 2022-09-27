@@ -13,12 +13,6 @@ comprises four Haskell files (modules) in the `src/` directory. Each
 module provides exercises for an individual lecture and has the
 corresponding name (e.g. `Lecture1.hs`).
 
-## Deadlines
-
-These exercises were created specifically for the Haskell Beginners
-2022 course. You can expect to get feedback on your solutions if you
-submit them before **28 February 2022, 23:59:59 GMT**.
-
 ## Working with the course
 
 This section contains instructions about setting up the development
