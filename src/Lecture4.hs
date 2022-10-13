@@ -29,7 +29,7 @@ Specifically:
   2. Each line contains exactly 3 comma-separated values.
   3. The first value is a name of a product: a non-empty string
      containing any characters except comma.
-  4. Second value is the type of trade. It' either a "Buy" or "Sell" string.
+  4. Second value is the type of trade. It's either a "Buy" or "Sell" string.
   5. The last, third value, is a non-negative integer number: the cost
      of the product.
   6. Each value might be surrounded by any amount of spaces.
@@ -44,7 +44,7 @@ same. Only values can change depending on file content.
 For example, for the file content above, the program should print the following:
 
 
-Total positions:       : 3
+Total positions        : 3
 Total final balance    : -15
 Biggest absolute cost  : 50
 Smallest absolute cost : 10
@@ -219,7 +219,7 @@ non-empty list of rows.
 
 We can use the 'NonEmpty' data type from the 'Data.List.NonEmpty'
 module for this purpose. 'NonEmpty' is like 'List1' from Lecture 3
-exercises (remember that type?) but with the different constructor.
+exercises (remember that type?) but with a different constructor.
 
 Have a look at the 'sconcat' function from the 'Semigroup' typeclass to
 implement the next task.
@@ -232,8 +232,8 @@ combineRows = error "TODO"
 After we've calculated stats for all rows, we can then pretty-print
 our final result.
 
-If there's no some value (for example, there were not "Buy" products),
-you can return string "no value"
+If there's no value for a field (for example, there were not "Buy" products),
+you can return string "no value".
 -}
 
 displayStats :: Stats -> String
@@ -241,8 +241,8 @@ displayStats = error "TODO"
 
 {-
 Now, we definitely have all the pieces in places! We can write a
-function that takes content of the file (the full content with multiple lines)
-and converts it to pretty-printed stats.
+function that takes the content of the file (the full content with multiple
+lines) and converts it to pretty-printed stats.
 
 The only problem here is that after parsing a file we might end with
 an empty list of rows but our 'combineRows' function requires to have
@@ -273,10 +273,10 @@ printProductStats = error "TODO"
 Okay, I lied. This is not the last thing. Now, we need to wrap
 everything together. In our 'main' function, we need to read
 command-line arguments that contain a path to a file and then call
-'printProductStats' if arguments contain a path. If they are invalid,
+'printProductStats' if the arguments contain a path. If they are invalid,
 you can print an error message.
 
-Use 'getArgs' function from the 'System.Environment' module to read
+Use the 'getArgs' function from the 'System.Environment' module to read
 CLI args:
 
 https://hackage.haskell.org/package/base-4.16.0.0/docs/System-Environment.html#v:getArgs
@@ -313,7 +313,7 @@ other hand, it's easy to introduce space leaks if you're not being
 careful.
 
 The naive and straightforward implementation of this task most likely
-contains space leaks. To implement the optimal streaming and laziness
+contains space leaks. To implement the optimal streaming and lazy
 solution, consider doing the following improvements:
 
   1. Enable the {-# LANGUAGE StrictData #-} pragma to this module.
