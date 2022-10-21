@@ -70,8 +70,8 @@ sumOfSquares x y = x^2 + y^2
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
 lastDigit :: Int -> Int
-lastDigit n 
-    | n < 0 = ((-1) * n) `mod` 10
+lastDigit n
+    | n < 0 = (-1) * n `mod` 10
     | otherwise = n `mod` 10
 
 {- | Write a function that takes three numbers and returns the
@@ -87,9 +87,9 @@ Try to use local variables (either let-in or where) to implement this
 function.
 -}
 minmax :: Int -> Int -> Int -> Int
-minmax x y z = maxNum - minNum 
-    where 
-        l = [x, y, z] 
+minmax x y z = maxNum - minNum
+    where
+        l = [x, y, z]
         maxNum = maximum l
         minNum = minimum l
 
@@ -109,7 +109,7 @@ first character) and negative end position should result in an empty
 string.
 -}
 subString :: Int -> Int -> String -> String
-subString start end str 
+subString start end str
     | end < 0 = []
     | start < 0 = take (end + 1) str
     | otherwise = take (end - start + 1) . drop start $ str
@@ -123,7 +123,7 @@ and finds a sum of the numbers inside this string.
 The string contains only spaces and/or numbers.
 -}
 strSum :: String -> Int
-strSum = sum . map (\s -> read s :: Int) . words  
+strSum = sum . map (\s -> read s :: Int) . words
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
@@ -139,9 +139,9 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 🕯 HINT: Use recursion to implement this function.
 -}
 lowerAndGreater :: Int -> [Int] -> String
-lowerAndGreater n list = (show n) ++ " is greater than " ++ (show greater) ++ " elements and lower than " ++ (show lower) ++ " elements"
+lowerAndGreater n list = show n ++ " is greater than " ++ show greater ++ " elements and lower than " ++ show lower ++ " elements"
     where
-        (g, l) = partition (\x -> x < n) list
-        lower = length . filter (\x -> x > n) $ l
+        (g, l) = partition (< n) list
+        lower = length . filter (> n) $ l
         greater = length g
-        
+
