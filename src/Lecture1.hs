@@ -127,7 +127,7 @@ strSum = sum . map (\s -> read s :: Int) . words
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
-greated than the given number and strictly lower.
+greater than the given number and strictly lower.
 
 >>> lowerAndGreater 3 [1 .. 9]
 "3 is greater than 2 elements and lower than 6 elements"
