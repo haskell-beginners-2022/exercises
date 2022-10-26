@@ -219,7 +219,7 @@ mergeSort = error "TODO"
 
 
 {- | Haskell is famous for being a superb language for implementing
-compilers and interpeters to other programming languages. In the next
+compilers and interpreters to other programming languages. In the next
 tasks, you need to implement a tiny part of a compiler.
 
 We're going to work on a small subset of arithmetic operations.
