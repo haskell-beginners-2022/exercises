@@ -41,7 +41,7 @@ module Lecture2
     ) where
 
 -- VVV If you need to import libraries, do it after this line ... VVV
-
+import Data.Char
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 {- | Implement a function that finds a product of all the numbers in
@@ -52,7 +52,9 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct [] = 1
+lazyProduct (0:_) = 0
+lazyProduct (x:xs) = x * lazyProduct xs
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -62,7 +64,8 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate [] = []
+duplicate (x:xs) = x : x : duplicate xs
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -74,7 +77,16 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt i list = if i < 0 then (Nothing, list) else go 0 [] list
+  where
+    go :: Int -> [b] -> [b] -> (Maybe b, [b])
+    go _ r [] = (Nothing, r)
+    go n r (x:xs) = 
+      if n == i 
+      then (Just x, r ++ xs) 
+      else go (n+1) (r ++ [x]) xs
+
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -85,7 +97,8 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -101,7 +114,8 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: [Char] -> [Char]
+dropSpaces = takeWhile (not . isSpace) . dropWhile isSpace 
 
 {- |
 
@@ -158,13 +172,76 @@ You're free to define any helper functions.
 -}
 
 -- some help in the beginning ;)
+newtype Health = MkHealth Int
+newtype Attack = MkAttack Int
+
 data Knight = Knight
-    { knightHealth    :: Int
-    , knightAttack    :: Int
+    { knightHealth    :: Health
+    , knightAttack    :: Attack
     , knightEndurance :: Int
     }
 
-dragonFight = error "TODO"
+data Color 
+    = Red
+    | Black
+    | Green
+
+data Dragon = Dragon
+    { dragonColor :: Color
+    , dragonHealth :: Health
+    , dragonFirePower :: Attack
+    }
+
+data FightOutcome
+    = Win
+    | Loss
+    | Flee
+    deriving (Show)
+
+dragonFight :: Knight -> Dragon -> FightOutcome
+dragonFight k d = takeTurn 1 (k, d)
+
+takeTurn :: Int -> (Knight, Dragon) -> FightOutcome
+takeTurn n (k, d)
+    | isDead (knightHealth k) = Loss
+    | isDead (dragonHealth d) = Win
+    | knightEndurance k == 0 = Flee
+    | otherwise = if n `mod` 10 == 0 then takeTurn (n+1) (swordStrike (dragonBreath k d) d) else takeTurn (n+1) (swordStrike k d)
+
+isDead :: Health -> Bool
+isDead (MkHealth h) = h <= 0
+
+swordStrike :: Knight -> Dragon -> (Knight, Dragon)
+swordStrike k d = (decEndurance k, damageDragon (knightAttack k) d)
+
+dragonBreath :: Knight -> Dragon -> Knight
+dragonBreath k d = damageKnight (dragonFirePower d) k
+
+damageKnight :: Attack -> Knight -> Knight
+damageKnight a k = Knight {
+  knightHealth = reduceHealth a (knightHealth k),
+  knightAttack = knightAttack k,
+  knightEndurance = knightEndurance k
+}
+
+damageDragon :: Attack -> Dragon -> Dragon
+damageDragon a d = Dragon {
+  dragonColor     = dragonColor d,
+  dragonHealth    = reduceHealth a (dragonHealth d),
+  dragonFirePower = dragonFirePower d
+}
+
+reduceHealth :: Attack -> Health -> Health
+reduceHealth (MkAttack a) (MkHealth h)
+    | a > h     = MkHealth 0
+    | otherwise = MkHealth (h - a)
+
+decEndurance :: Knight -> Knight
+decEndurance k = Knight { 
+    knightHealth    = knightHealth k, 
+    knightAttack    = knightAttack k,
+    knightEndurance = knightEndurance k - 1
+  }
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -185,7 +262,9 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = True
+isIncreasing [_] = True
+isIncreasing (x:y:xs) = if x > y then False else True && isIncreasing (y:xs)
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -198,7 +277,11 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] r          = r
+merge l []          = l
+merge (x:xs) (y:ys)
+    | x > y = y : (merge (x:xs) ys)
+    | otherwise = x : (merge xs (y:ys))
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -215,8 +298,11 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
-
+mergeSort [] = []
+mergeSort [x] = [x]
+mergeSort list = merge (mergeSort l) (mergeSort r)
+    where
+        (l,r) = splitAt ((length list) `div` 2) list
 
 {- | Haskell is famous for being a superb language for implementing
 compilers and interpreters to other programming languages. In the next
@@ -268,7 +354,18 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval _ (Lit n)   = Right n
+eval v (Var str) = eitherFromMaybe (lookup str v) str
+eval v (Add l r) = addEitherWithRightInt (eval v l) (eval v r)
+
+eitherFromMaybe :: Maybe a -> [Char] -> Either EvalError a
+eitherFromMaybe Nothing str = Left (VariableNotFound str)
+eitherFromMaybe (Just n) _ = Right n
+
+addEitherWithRightInt :: Either a Int -> Either a Int -> Either a Int
+addEitherWithRightInt  _ (Left a)          = Left a
+addEitherWithRightInt  (Left a) _          = Left a
+addEitherWithRightInt  (Right n) (Right m) = Right (n + m)
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -292,4 +389,18 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding e = if n == 0 then expr else Add expr (Lit n)
+  where
+    (expr, n) = accLit 0 e
+
+
+accLit :: Int -> Expr -> (Expr, Int)
+accLit _ (Lit n) = ((Lit n), 0)
+accLit acc (Var str) = ((Var str), acc)
+accLit acc (Add (Lit n) (Lit m)) = ((Lit (n+m)), acc)
+accLit acc (Add (Lit n) e) = accLit (acc + n) e
+accLit acc (Add e (Lit n)) = accLit (acc + n) e
+accLit acc (Add e f) = let 
+  (expr1, m) = (accLit acc e)
+  (expr2, p) = (accLit acc f)
+  in ((Add expr1 expr2), p + m)
