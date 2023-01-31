@@ -118,8 +118,8 @@ To develop in Haskell, you need to install `ghcup`, `ghc` and `cabal`.
    terminal, if these tools are not yet installed.
 
     ```shell
-    ghcup install ghc 8.10.7
-    ghcup set ghc 8.10.7
+    ghcup install ghc 9.2.5
+    ghcup set ghc 9.2.5
     ghcup install cabal 3.6.2.0
     ```
 
@@ -128,7 +128,7 @@ To develop in Haskell, you need to install `ghcup`, `ghc` and `cabal`.
 
     ```shell
     $ ghc --version
-    The Glorious Glasgow Haskell Compilation System, version 8.10.7
+    The Glorious Glasgow Haskell Compilation System, version 9.2.5
     $ cabal --version
     cabal-install version 3.6.2.0
     compiled using version 3.6.2.0 of the Cabal library

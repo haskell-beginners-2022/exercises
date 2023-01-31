@@ -15,14 +15,14 @@ copyright:           2021-2022 Haskell Beginners 2022 Course
 build-type:          Simple
 extra-doc-files:     README.md
                      CHANGELOG.md
-tested-with:         GHC == 8.10.7
+tested-with:         GHC == 9.2.5
 
 source-repository head
   type:                git
   location:            https://github.com/haskell-beginners-2022/exercises.git
 
 common common-options
-  build-depends:       base ^>= 4.14
+  build-depends:       base >= 4.14 && < 4.17
 
   ghc-options:         -Wall
                        -Wcompat
@@ -96,7 +96,7 @@ test-suite exercises-test
   build-depends:       exercises
                      , hspec            ^>= 2.9
                      , hspec-hedgehog   ^>= 0.0
-                     , hedgehog         ^>= 1.0
+                     , hedgehog         ^>= 1.1
                      , hedgehog-classes ^>= 0.2
                      , silently         ^>= 1.2
 
