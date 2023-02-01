@@ -40,7 +40,6 @@ where
 -- VVV If you need to import libraries, do it after this line ... VVV
 
 import Data.Char (isSpace)
-import Foreign.C (errnoToIOError)
 -- ^ ^^ and before this line. Otherwise the test suite might fail  ^^^
 
 -- | Implement a function that finds a product of all the numbers in
@@ -295,10 +294,10 @@ eval vars expr = case expr of
 -- x + y + 10
 -- > eval vs e
 -- Right 45
-e :: Expr
-e = Add (Var "y") (Add (Var "x") (Lit 10))
-vs :: Variables
-vs = [("x", 15), ("y", 20)]
+-- e :: Expr
+-- e = Add (Var "y") (Add (Var "x") (Lit 10))
+-- vs :: Variables
+-- vs = [("x", 15), ("y", 20)]
 
 -- | Compilers also perform optimizations! One of the most common
 -- optimizations is "Constant Folding". It performs arithmetic operations
@@ -320,5 +319,32 @@ vs = [("x", 15), ("y", 20)]
 --
 -- Write a function that takes and expression and performs "Constant
 -- Folding" optimization on the given expression.
+
+-- If the given expr is Var or Lit, it's already split
+-- Otherwise, split each argument expr of Add recursively
+-- Merge two resulting folded splits to get a new split expr
+
+type SplitResult = ([String], Int)
+
+constantSplit :: Expr -> SplitResult
+constantSplit expr = case expr of
+  Lit c -> ([], c) 
+  Var v -> ([v], 0)
+  Add ea eb -> mergeSplit (constantSplit ea) (constantSplit eb)
+    where
+      mergeSplit :: SplitResult -> SplitResult -> SplitResult
+      mergeSplit (vas, ca) (vbs, cb) = (vas ++ vbs, ca + cb)
+
+assembleSplit :: SplitResult -> Expr
+assembleSplit ([], lit) = Lit lit
+assembleSplit ([v], lit) = Add (Var v) (Lit lit)   
+assembleSplit (v : vs, lit) = Add (Var v) (assembleSplit (vs, lit))
+
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding = assembleSplit . constantSplit
+
+
+-- test constantFolding
+
+-- x + 10 + y + 15 + 20
+-- e = Add (Var "x") (Add (Lit 10) (Add (Var "y") (Add (Lit 15) (Lit 20))))
