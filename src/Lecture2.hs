@@ -40,6 +40,7 @@ where
 -- VVV If you need to import libraries, do it after this line ... VVV
 
 import Data.Char (isSpace)
+
 -- ^ ^^ and before this line. Otherwise the test suite might fail  ^^^
 
 -- | Implement a function that finds a product of all the numbers in
@@ -50,7 +51,7 @@ import Data.Char (isSpace)
 -- 84
 lazyProduct :: [Int] -> Int
 lazyProduct lst = case lst of
-  [] -> 0
+  [] -> 1
   (0 : _) -> 0
   [x] -> x
   (x : xs) -> x * lazyProduct xs
@@ -76,9 +77,15 @@ duplicate lst = case lst of
 -- >>> removeAt 10 [1 .. 5]
 -- (Nothing,[1,2,3,4,5])
 removeAt :: Int -> [a] -> (Maybe a, [a])
-removeAt index lst  
-  | index > length lst = (Nothing, lst)
-  | otherwise = (Just (lst !! index), take index lst ++ drop (index + 1) lst)
+removeAt = removeHelper []
+  where
+    -- cannot use length, lst can be infinite
+    removeHelper :: [a] -> Int -> [a] -> (Maybe a, [a])
+    removeHelper before index after
+      | index < 0 = (Nothing, after)
+      | null after = (Nothing, before)
+      | length before == index = (Just (head after), before ++ drop 1 after)
+      | otherwise = removeHelper (before ++ take 1 after) index (drop 1 after)
 
 -- | Write a function that takes a list of lists and returns only
 -- lists of even lengths.
@@ -105,7 +112,9 @@ evenLists = filter (even . length)
 --
 -- 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 dropSpaces :: String -> String
-dropSpaces = filter (not . isSpace) 
+-- the str can be infinite, cannot filter each char
+-- dropSpaces = filter (not . isSpace)
+dropSpaces = head . words
 
 -- |
 --
@@ -187,7 +196,7 @@ previous ones. Difficulty is a relative concept.
 -- >>> isIncreasing [1 .. 10]
 -- True
 isIncreasing :: [Int] -> Bool
-isIncreasing lst = case lst of 
+isIncreasing lst = case lst of
   [] -> True
   [_] -> True
   (x : xs) -> (x < head xs) && isIncreasing xs
@@ -202,9 +211,9 @@ isIncreasing lst = case lst of
 -- >>> merge [1, 2, 4] [3, 7]
 -- [1,2,3,4,7]
 merge :: [Int] -> [Int] -> [Int]
-merge [] b = b 
+merge [] b = b
 merge a [] = a
-merge (xa : xsa) (xb : xsb)  
+merge (xa : xsa) (xb : xsb)
   | xa < xb = xa : merge xsa (xb : xsb)
   | otherwise = xb : merge (xa : xsa) xsb
 
@@ -224,11 +233,10 @@ merge (xa : xsa) (xb : xsb)
 mergeSort :: [Int] -> [Int]
 mergeSort lst = case lst of
   [] -> []
-  [x] -> [x] 
-  _ -> merge (mergeSort (take half lst)) (mergeSort (drop half lst)) 
-    where 
+  [x] -> [x]
+  _ -> merge (mergeSort (take half lst)) (mergeSort (drop half lst))
+    where
       half = div (length lst) 2
-
 
 -- | Haskell is famous for being a superb language for implementing
 -- compilers and interpreters to other programming languages. In the next
@@ -280,13 +288,13 @@ type EvalResult = Either EvalError Int
 eval :: Variables -> Expr -> Either EvalError Int
 eval vars expr = case expr of
   Lit cons -> Right cons
-  Var var -> case lookup var vars of 
-    Nothing -> Left (VariableNotFound  (var ++ " not found"))
+  Var var -> case lookup var vars of
+    Nothing -> Left (VariableNotFound var)
     Just val -> Right val
   Add ea eb -> evalAdd (eval vars ea) (eval vars eb)
     where
       evalAdd :: EvalResult -> EvalResult -> EvalResult
-      evalAdd (Left err) _ = Left err 
+      evalAdd (Left err) _ = Left err
       evalAdd _ (Left err) = Left err
       evalAdd (Right ra) (Right rb) = Right (ra + rb)
 
@@ -328,7 +336,7 @@ type SplitResult = ([String], Int)
 
 constantSplit :: Expr -> SplitResult
 constantSplit expr = case expr of
-  Lit c -> ([], c) 
+  Lit c -> ([], c)
   Var v -> ([v], 0)
   Add ea eb -> mergeSplit (constantSplit ea) (constantSplit eb)
     where
@@ -337,12 +345,12 @@ constantSplit expr = case expr of
 
 assembleSplit :: SplitResult -> Expr
 assembleSplit ([], lit) = Lit lit
-assembleSplit ([v], lit) = Add (Var v) (Lit lit)   
+assembleSplit ([v], 0) = Var v
+assembleSplit ([v], lit) = Add (Var v) (Lit lit)
 assembleSplit (v : vs, lit) = Add (Var v) (assembleSplit (vs, lit))
 
 constantFolding :: Expr -> Expr
 constantFolding = assembleSplit . constantSplit
-
 
 -- test constantFolding
 
