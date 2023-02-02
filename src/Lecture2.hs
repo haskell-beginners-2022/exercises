@@ -111,10 +111,24 @@ evenLists = filter (even . length)
 --  composition (the dot (.) operator) in this function.
 --
 -- 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
+
+dropSpacesBefore :: String -> String
+dropSpacesBefore str 
+  | null str = str
+  | isSpace (head str) = dropSpacesBefore (tail str)
+  | otherwise = str
+
+dropSpacesAfter :: String -> String
+dropSpacesAfter str 
+  | null str = str
+  | isSpace (head str) = ""
+  | otherwise = head str : dropSpacesAfter (tail str) 
+
 dropSpaces :: String -> String
+dropSpaces = dropSpacesAfter . dropSpacesBefore
+
 -- the str can be infinite, cannot filter each char
 -- dropSpaces = filter (not . isSpace)
-dropSpaces = head . words
 
 -- |
 --
