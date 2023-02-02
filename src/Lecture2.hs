@@ -111,18 +111,17 @@ evenLists = filter (even . length)
 --  composition (the dot (.) operator) in this function.
 --
 -- 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
-
 dropSpacesBefore :: String -> String
-dropSpacesBefore str 
+dropSpacesBefore str
   | null str = str
   | isSpace (head str) = dropSpacesBefore (tail str)
   | otherwise = str
 
 dropSpacesAfter :: String -> String
-dropSpacesAfter str 
+dropSpacesAfter str
   | null str = str
   | isSpace (head str) = ""
-  | otherwise = head str : dropSpacesAfter (tail str) 
+  | otherwise = head str : dropSpacesAfter (tail str)
 
 dropSpaces :: String -> String
 dropSpaces = dropSpacesAfter . dropSpacesBefore
@@ -187,10 +186,82 @@ dropSpaces = dropSpacesAfter . dropSpacesBefore
 data Knight = Knight
   { knightHealth :: Int,
     knightAttack :: Int,
-    knightEndurance :: Int
+    knightEndurance :: Int,
+    knightExperience :: Int
+    -- knightReward is polymorphic?
   }
+  deriving (Show, Eq)
 
-dragonFight = error "TODO"
+data Chest a = Chest
+  { chestGold :: Int,
+    chestTreasure :: Maybe a
+  }
+  deriving (Show, Eq)
+
+data DragonColor
+  = Red
+  | Black
+  | Green
+  deriving (Show, Eq)
+
+data Dragon = Dragon
+  { dragonColor :: DragonColor,
+    dragonHealth :: Int,
+    dragonAttack :: Int
+  }
+  deriving (Show, Eq)
+
+getExperience :: Dragon -> Int
+getExperience dragon = case dragonColor dragon of
+  Red -> 100
+  Black -> 150
+  Green -> 250
+
+data FightState = FightState
+  { knightState :: Knight,
+    dragonState :: Dragon
+  }
+  deriving (Show, Eq)
+
+data FightResult
+  = KnightWin FightState
+  | KnightDie FightState
+  | KnightRun FightState
+  deriving (Show, Eq)
+
+knightTurn :: Knight -> Dragon -> FightState
+knightTurn knight dragon =
+  FightState
+    { knightState = knight {knightEndurance = knightEndurance knight - 1},
+      dragonState = dragon {dragonHealth = dragonHealth dragon - knightAttack knight}
+    }
+
+dragonTurn :: Knight -> Dragon -> FightState
+dragonTurn knight dragon =
+  FightState
+    { knightState = knight {knightHealth = knightHealth knight - dragonAttack dragon},
+      dragonState = dragon
+    }
+
+fightTakeTurns :: Int -> FightState -> FightResult
+fightTakeTurns turnsCount state
+  | knightHealth knight <= 0 = KnightDie state
+  | knightEndurance knight <= 0 = KnightRun state
+  | dragonHealth dragon <= 0 = KnightWin FightState {knightState = knight {knightExperience = getExperience dragon}, dragonState = dragon}
+  | turnsCount /= 0 && mod turnsCount 10 == 0 = fightTakeTurns (turnsCount + 1) (dragonTurn knight dragon)
+  | otherwise = fightTakeTurns (turnsCount + 1) (knightTurn knight dragon)
+  where
+    knight = knightState state
+    dragon = dragonState state
+
+dragonFight :: Knight -> Dragon -> FightResult
+dragonFight knight dragon = fightTakeTurns 0 initialstate
+  where
+    initialstate = FightState {knightState = knight, dragonState = dragon}
+
+initKnight = Knight {knightAttack = 15, knightEndurance = 30, knightHealth = 100, knightExperience = 10}
+
+initDragon = Dragon {dragonAttack = 30, dragonHealth = 250, dragonColor = Red}
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
