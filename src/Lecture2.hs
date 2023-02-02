@@ -259,6 +259,7 @@ dragonFight knight dragon = fightTakeTurns 0 initialstate
   where
     initialstate = FightState {knightState = knight, dragonState = dragon}
 
+-- test dragonFight
 initKnight = Knight {knightAttack = 15, knightEndurance = 30, knightHealth = 100, knightExperience = 10}
 
 initDragon = Dragon {dragonAttack = 30, dragonHealth = 250, dragonColor = Red}
