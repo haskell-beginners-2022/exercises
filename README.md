@@ -202,10 +202,3 @@ And to tests a specific function, use:
 ```shell
 stack test :exercises-test --test-arguments='-m "strSum"'
 ```
-
-## Acknowledgement
-
-This course is inspired by
-[Learn4Haskell](https://github.com/kowainik/learn4haskell) authored by
-[@vrom911](https://github.com/vrom911) and
-[@chshersh](https://github.com/chshersh).
