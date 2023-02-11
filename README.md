@@ -120,7 +120,7 @@ To develop in Haskell, you need to install `ghcup`, `ghc` and `cabal`.
     ```shell
     ghcup install ghc 9.2.5
     ghcup set ghc 9.2.5
-    ghcup install cabal 3.6.2.0
+    ghcup install cabal 3.8.1.0
     ```
 
 	You can verify that everything is installed correctly by running
@@ -130,8 +130,8 @@ To develop in Haskell, you need to install `ghcup`, `ghc` and `cabal`.
     $ ghc --version
     The Glorious Glasgow Haskell Compilation System, version 9.2.5
     $ cabal --version
-    cabal-install version 3.6.2.0
-    compiled using version 3.6.2.0 of the Cabal library
+    cabal-install version 3.8.1.0
+    compiled using version 3.8.1.0 of the Cabal library
     ```
 
 4. Run `cabal update` to fetch the latest info about Haskell packages.
@@ -142,15 +142,6 @@ If you don't have any IDE preferences, we recommend installing
 [Visual Studio Code](https://code.visualstudio.com/download) with the
 [Haskell plugin](https://marketplace.visualstudio.com/items?itemName=haskell.haskell).
 The mentioned plugin would give you everything required to immediately start coding with Haskell.
-
-### Gitpod
-Instead of configuring a local setup, you can also use [Gitpod](https://www.gitpod.io/), a VSCode-based Web IDE.
-
-Click the button below. A workspace with Haskell environment will be created.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/haskell-beginners-2022/exercises)
-
-To use it on your forked repo, edit the 'Open in Gitpod' button url to `https://gitpod.io/#https://github.com/<my-github-username>/exercises`
 
 ## How to build and test?
 
