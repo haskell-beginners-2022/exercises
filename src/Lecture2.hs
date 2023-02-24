@@ -350,11 +350,7 @@ eval env exp = case exp of
   Var x -> case lookup x env of
     Nothing -> Left (VariableNotFound x)
     Just v -> Right v
-  Add expl expr -> case eval env expl of
-    Left t -> Left t
-    Right lv -> case eval env expr of
-      Left t -> Left t
-      Right rv -> Right (lv + rv)
+  Add expl expr -> eval env expl >>= \l -> eval env expr >>= \r -> Right (l + r)
 
 -- | Compilers also perform optimizations! One of the most common
 -- optimizations is "Constant Folding". It performs arithmetic operations

@@ -166,7 +166,7 @@ instance Semigroup a => Semigroup (Treasure a) where
   (<>) (SomeTreasure l) (SomeTreasure r) = SomeTreasure (l <> r)
 
 instance Semigroup a => Monoid (Treasure a) where
-    mempty = NoTreasure
+  mempty = NoTreasure
 
 -- | Abstractions are less helpful if we can't write functions that
 -- use them!
@@ -184,11 +184,11 @@ instance Semigroup a => Monoid (Treasure a) where
 -- Product {getProduct = 6}
 appendDiff3 :: (Eq a, Semigroup a) => a -> a -> a -> a
 appendDiff3 f s t
-    | f == s && s == t = f
-    | f == s = f <> t
-    | s == t = f <> s
-    | f == t = f <> s
-    | otherwise = f <> s <> t
+  | f == s && s == t = f
+  | f == s = f <> t
+  | s == t = f <> s
+  | f == t = f <> s
+  | otherwise = f <> s <> t
 
 {-
 
@@ -220,8 +220,14 @@ types that can have such an instance.
 -- instance Foldable Weekday where
 -- instance Foldable Gold where
 -- instance Foldable Reward where
--- instance Foldable List1 where
--- instance Foldable Treasure where
+instance Foldable List1 where
+  foldr :: (a -> b -> b) -> b -> List1 a -> b
+  foldr f acc (List1 a al) = foldr f acc (a : al)
+
+instance Foldable Treasure where
+  foldr :: (a -> b -> b) -> b -> Treasure a -> b
+  foldr f acc (SomeTreasure a) = f a acc
+  foldr _ acc NoTreasure = acc
 
 {-
 
@@ -236,8 +242,14 @@ types that can have such an instance.
 -- instance Functor Weekday where
 -- instance Functor Gold where
 -- instance Functor Reward where
--- instance Functor List1 where
--- instance Functor Treasure where
+instance Functor List1 where
+  fmap :: (a -> b) -> List1 a -> List1 b
+  fmap f (List1 a al) = List1 (f a) (f <$> al)
+
+instance Functor Treasure where
+  fmap :: (a -> b) -> Treasure a -> Treasure b
+  fmap f (SomeTreasure a) = SomeTreasure (f a)
+  fmap _ NoTreasure = NoTreasure
 
 -- | Functions are first-class values in Haskell. This means that they
 -- can be even stored inside other data types as well!
@@ -254,4 +266,5 @@ types that can have such an instance.
 -- Just [8,9,10]
 -- >>> apply 5 [(+ 3), (* 4), div 17]
 -- [8,20,3]
-apply = error "TODO"
+apply :: Functor f => a -> f (a -> b) -> f b
+apply a b = ($ a) <$> b
