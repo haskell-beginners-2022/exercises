@@ -41,6 +41,7 @@ where
 
 import Data.Char
 import Data.Fixed (E0)
+import Foreign (IntPtr(IntPtr))
 
 -- ^ ^^ and before this line. Otherwise the test suite might fail  ^^^
 
@@ -193,7 +194,22 @@ data Knight = Knight
     knightEndurance :: Int
   }
 
-dragonFight = error "TODO"
+data Chest a = Chest
+  { chestGold :: Int,
+    chestTresaure :: a
+  }
+
+data DragonType
+  = Red
+  | Black
+  | Green
+
+data Dragon = Dragon
+  { dragonType :: DragonType,
+    dragonHealth :: Int
+  }
+
+dragonFight = 0
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -303,7 +319,21 @@ data EvalError
 -- | Having all this set up, we can finally implement an evaluation function.
 -- It returns either a successful evaluation result or an error.
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval _ (Lit a) = Right a
+eval symbols (Var x) = 
+            getVal (lookup x symbols)
+             where 
+             getVal :: Maybe Int  -> Either EvalError Int
+             getVal Nothing = Left (VariableNotFound x)
+             getVal (Just val) = Right val
+eval symbols (Add x y) = let e1 = eval symbols x 
+                             e2 = eval symbols y 
+                         in getResult e1 e2
+                         where 
+                               getResult :: Either EvalError Int -> Either EvalError Int -> Either EvalError Int
+                               getResult (Left err) _ = Left err
+                               getResult _ (Left err) = Left err
+                               getResult (Right n1) (Right n2) = Right (n1 + n2)
 
 -- | Compilers also perform optimizations! One of the most common
 -- optimizations is "Constant Folding". It performs arithmetic operations
