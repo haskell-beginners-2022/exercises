@@ -41,7 +41,7 @@ where
 
 import Data.Char
 import Data.Fixed (E0)
-import Foreign (IntPtr(IntPtr))
+import Foreign (IntPtr(IntPtr), Bits (xor))
 
 -- ^ ^^ and before this line. Otherwise the test suite might fail  ^^^
 
@@ -356,4 +356,30 @@ eval symbols (Add x y) = let e1 = eval symbols x
 -- Write a function that takes and expression and performs "Constant
 -- Folding" optimization on the given expression.
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding (Lit x) = Lit x
+constantFolding (Var x) = Var x
+constantFolding (Add (Var x) (Lit 0)) = Var x  
+constantFolding (Add (Var x) (Var y)) = Add (Var x) (Var y) 
+constantFolding (Add (Lit x) (Lit y)) = Lit (x + y) 
+constantFolding (Add (Var x) y) = Add (Var x) (constantFolding y)
+constantFolding (Add (Lit x) y) = let expr = constantFolding y in constantFolding (getFold expr)
+                                where 
+                                    getFold :: Expr -> Expr 
+                                    getFold (Lit e) = Lit (x + e)
+                                    getFold (Var e) = Add (Var e) (Lit x)
+                                    getFold (Add (Var e1) (Lit e2)) = Add (Var e1) (Lit (x+e2))
+                                    getFold _ = Add (Lit x) y
+constantFolding (Add x (Var y)) = constantFolding (Add (Var y) x)
+constantFolding (Add x (Lit y)) = constantFolding (Add (Lit y) x)
+constantFolding (Add x y) = let e1 = constantFolding x
+                                e2 = constantFolding y
+                                in tryFold e1 e2
+                                where 
+                                    tryFold :: Expr -> Expr -> Expr 
+                                    tryFold (Lit l1) (Lit l2) = Lit (l1 + l2)
+                                    tryFold (Var v1) (Var v2) = Add (Var v1) (Var v2)
+                                    tryFold (Add (Lit l1) x1) (Add (Lit l2) y1) = Add x1 (Add y1 (Lit (l1 + l2)))
+                                    tryFold (Add x1 (Lit l1)) (Add y1 (Lit l2)) = Add x1 (Add y1 (Lit (l1 + l2)))
+                                    tryFold e1 e2 = Add e1 e2
+
+
