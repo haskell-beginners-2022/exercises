@@ -139,10 +139,10 @@ genStats = Stats
     <*> (Sum <$> genInt)
     <*> (Max <$> genInt)
     <*> (Min <$> genInt)
-    <*> (Gen.maybe $ Max <$> genInt)
-    <*> (Gen.maybe $ Min <$> genInt)
-    <*> (Gen.maybe $ Max <$> genInt)
-    <*> (Gen.maybe $ Min <$> genInt)
+    <*> Gen.maybe (Max <$> genInt)
+    <*> Gen.maybe (Min <$> genInt)
+    <*> Gen.maybe (Max <$> genInt)
+    <*> Gen.maybe (Min <$> genInt)
     <*> genMaxLen
   where
     genInt :: Gen Int
