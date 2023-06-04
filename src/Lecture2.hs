@@ -42,8 +42,6 @@ module Lecture2
 
 -- VVV If you need to import libraries, do it after this line ... VVV
 import Data.Char (isSpace)
-import Data.List (dropWhileEnd)
-
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 {- | Implement a function that finds a product of all the numbers in
@@ -378,14 +376,22 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding expr = Add simpExpr $ Lit cnst
+constantFolding expr =
+  case (simpExpr, cnst) of
+    (_, 0) -> simpExpr
+    (Lit v, _) -> Lit (v + cnst)
+    _ -> Add simpExpr (Lit cnst)
   where
     sumConst :: Expr -> (Expr, Int)
     (simpExpr, cnst) = sumConst expr
     sumConst (Var a) = (Var a, 0)
     sumConst (Lit a) = (Lit 0, a)
-    sumConst (Add (Lit a) b) = (fst $ sumConst b, a + snd (sumConst b))
-    sumConst (Add a (Lit b)) = (fst $ sumConst a, snd (sumConst a) + b)
+    sumConst (Add (Lit a) b) = (rexpr, a + rval)
+      where
+        (rexpr, rval) = sumConst b
+    sumConst (Add a (Lit b)) = (lexpr, lval + b)
+      where
+        (lexpr, lval) = sumConst a
     sumConst (Add a b) = (Add lexpr rexpr, lval + rval)
       where
         (lexpr, lval) = sumConst a
