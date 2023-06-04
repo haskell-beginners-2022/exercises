@@ -56,7 +56,7 @@ lazyProduct :: [Int] -> Int
 lazyProduct = lazyProduct'
   where
     lazyProduct' [] = 1
-    lazyProduct' [0] = 0
+    lazyProduct' (0 : _) = 0
     lazyProduct' (x : xs) = x * lazyProduct' xs
 
 {- | Implement a function that duplicates every element in the list.
@@ -85,8 +85,13 @@ return the removed element.
 removeAt :: Int -> [a] -> (Maybe a, [a])
 removeAt n list = rm n list
   where
-    rm 0 (x:xs) = (Just x, xs)
-    rm k (_:xs) = rm (k-1) xs
+    rm k (x : xs)
+      | k == 0 = (Just x, xs)
+      | k > 0 = (idx, ys)
+      where
+        (idx, ys) = f $ rm (k - 1) xs
+        f (Just zdx, zs) = (Just zdx, x:zs)
+        f (Nothing, _) = (Nothing, list)
     rm _ _ = (Nothing, list)
 
 {- | Write a function that takes a list of lists and returns only
