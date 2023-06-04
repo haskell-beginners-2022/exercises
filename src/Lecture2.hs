@@ -82,7 +82,7 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt :: Int -> [Int] -> (Maybe Int, [Int])
+removeAt :: Int -> [a] -> (Maybe a, [a])
 removeAt n list = rm n list
   where
     rm 0 (x:xs) = (Just x, xs)
@@ -237,7 +237,11 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = True
+isIncreasing [_] = True
+isIncreasing (x:y:xs)
+  | x > y = False
+  | otherwise = isIncreasing (y:xs)
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -250,7 +254,13 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] [] = []
+merge [] b = b
+merge a [] = a
+merge (x : xs) (y : ys)
+  | x < y = x : merge xs (y : ys)
+  | x > y = y : merge (x : xs) ys
+  | otherwise = x : y : merge xs ys
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -267,7 +277,13 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort [] = []
+mergeSort [a] = [a]
+mergeSort xs = merge (mergeSort left) (mergeSort right)
+  where
+    len   = length xs
+    left  = take (len `div` 2) xs
+    right = drop (len `div` 2) xs
 
 
 {- | Haskell is famous for being a superb language for implementing
@@ -320,7 +336,15 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval vars expr =
+  case expr of
+    Lit v -> Right v
+    Var v -> getVar v
+    Add a b -> (+) <$> eval vars a <*> eval vars b
+  where
+    getVar v = case lookup v vars of
+      Just a -> Right a
+      Nothing -> Left $ VariableNotFound v
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -344,4 +368,16 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding expr = Add simpExpr $ Lit cnst
+  where
+    sumConst :: Expr -> (Expr, Int)
+    (simpExpr, cnst) = sumConst expr
+    sumConst (Var a) = (Var a, 0)
+    sumConst (Lit a) = (Lit 0, a)
+    sumConst (Add (Lit a) (Lit b)) = (Lit 0, a + b)
+    sumConst (Add (Lit a) b) = (fst $ sumConst b, a + snd (sumConst b))
+    sumConst (Add a (Lit b)) = (fst $ sumConst a, snd (sumConst a) + b)
+    sumConst (Add a b) = (Add lexpr rexpr, lval + rval)
+      where
+        (lexpr, lval) = sumConst a
+        (rexpr, rval) = sumConst b
