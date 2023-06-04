@@ -42,6 +42,7 @@ module Lecture2
 
 -- VVV If you need to import libraries, do it after this line ... VVV
 import Data.Char (isSpace)
+import Data.List (dropWhileEnd)
 
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
@@ -121,7 +122,11 @@ spaces.
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
 dropSpaces :: [Char] -> [Char]
-dropSpaces = filter (not . isSpace)
+dropSpaces = takeNotSpace . trimLeft
+  where 
+    trimLeft = dropWhile isSpace
+    takeNotSpace = takeWhile (not . isSpace)
+
 
 {- |
 
