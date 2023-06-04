@@ -374,7 +374,6 @@ constantFolding expr = Add simpExpr $ Lit cnst
     (simpExpr, cnst) = sumConst expr
     sumConst (Var a) = (Var a, 0)
     sumConst (Lit a) = (Lit 0, a)
-    sumConst (Add (Lit a) (Lit b)) = (Lit 0, a + b)
     sumConst (Add (Lit a) b) = (fst $ sumConst b, a + snd (sumConst b))
     sumConst (Add a (Lit b)) = (fst $ sumConst a, snd (sumConst a) + b)
     sumConst (Add a b) = (Add lexpr rexpr, lval + rval)
