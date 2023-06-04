@@ -41,7 +41,7 @@ module Lecture2
     ) where
 
 -- VVV If you need to import libraries, do it after this line ... VVV
-
+import Data.Char (isSpace)
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 {- | Implement a function that finds a product of all the numbers in
@@ -52,7 +52,11 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct = lazyProduct'
+  where
+    lazyProduct' [] = 1
+    lazyProduct' (0 : _) = 0
+    lazyProduct' (x : xs) = x * lazyProduct' xs
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -62,7 +66,10 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate = dup
+  where
+    dup [] = []
+    dup (x:xs) = x : x : dup xs
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -74,7 +81,17 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt n list = rm n list
+  where
+    rm k (x : xs)
+      | k == 0 = (Just x, xs)
+      | k > 0 = (idx, ys)
+      where
+        (idx, ys) = f $ rm (k - 1) xs
+        f (Just zdx, zs) = (Just zdx, x:zs)
+        f (Nothing, _) = (Nothing, list)
+    rm _ _ = (Nothing, list)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -85,7 +102,8 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -101,7 +119,12 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: [Char] -> [Char]
+dropSpaces = takeNotSpace . trimLeft
+  where 
+    trimLeft = dropWhile isSpace
+    takeNotSpace = takeWhile (not . isSpace)
+
 
 {- |
 
@@ -159,12 +182,49 @@ You're free to define any helper functions.
 
 -- some help in the beginning ;)
 data Knight = Knight
-    { knightHealth    :: Int
-    , knightAttack    :: Int
-    , knightEndurance :: Int
-    }
+  { knightHealth :: Int,
+    knightAttack :: Int,
+    knightEndurance :: Int
+  }
 
-dragonFight = error "TODO"
+type Gold = Int
+
+type Exp = Int
+
+newtype Treasure a = Treasure a
+
+data FightReward
+  = NormalReward Gold Exp (Treasure String)
+  | GreenReward Gold Exp
+
+data Dragon = Dragon
+  { dragonHealth :: Int,
+    dragonFirePower :: Int,
+    dragonReward :: FightReward
+  }
+
+data FightResult
+  = Fight Dragon
+  | KnightLoss
+  | KnightWin FightReward
+
+data DragonType = Red | Black | Green
+
+summonDragon :: DragonType -> Dragon
+summonDragon Red = Dragon 100 50 (NormalReward 100 100 (Treasure "Potion"))
+summonDragon Black = Dragon 100 50 (NormalReward 100 100 (Treasure "Food"))
+summonDragon Green = Dragon 100 50 (GreenReward 100 100)
+
+dragonFight :: Knight -> Dragon -> FightResult
+dragonFight knight dragon = result
+  where
+    result = getFightResult
+    -- TODO handle fight detail
+    getFightResult :: FightResult
+    getFightResult
+      | dragonHealth dragon <= 0 = KnightWin (dragonReward dragon)
+      | knightHealth knight <= 0 || knightEndurance knight <= 0 = KnightLoss
+      | otherwise = Fight dragon
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -185,7 +245,11 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = True
+isIncreasing [_] = True
+isIncreasing (x:y:xs)
+  | x > y = False
+  | otherwise = isIncreasing (y:xs)
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -198,7 +262,13 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge [] [] = []
+merge [] b = b
+merge a [] = a
+merge (x : xs) (y : ys)
+  | x < y = x : merge xs (y : ys)
+  | x > y = y : merge (x : xs) ys
+  | otherwise = x : y : merge xs ys
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -215,7 +285,13 @@ The algorithm of merge sort is the following:
 [1,2,3]
 -}
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort [] = []
+mergeSort [a] = [a]
+mergeSort xs = merge (mergeSort left) (mergeSort right)
+  where
+    len   = length xs
+    left  = take (len `div` 2) xs
+    right = drop (len `div` 2) xs
 
 
 {- | Haskell is famous for being a superb language for implementing
@@ -268,7 +344,15 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval vars expr =
+  case expr of
+    Lit v -> Right v
+    Var v -> getVar v
+    Add a b -> (+) <$> eval vars a <*> eval vars b
+  where
+    getVar v = case lookup v vars of
+      Just a -> Right a
+      Nothing -> Left $ VariableNotFound v
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -292,4 +376,23 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding expr =
+  case (simpExpr, cnst) of
+    (_, 0) -> simpExpr
+    (Lit v, _) -> Lit (v + cnst)
+    _ -> Add simpExpr (Lit cnst)
+  where
+    sumConst :: Expr -> (Expr, Int)
+    (simpExpr, cnst) = sumConst expr
+    sumConst (Var a) = (Var a, 0)
+    sumConst (Lit a) = (Lit 0, a)
+    sumConst (Add (Lit a) b) = (rexpr, a + rval)
+      where
+        (rexpr, rval) = sumConst b
+    sumConst (Add a (Lit b)) = (lexpr, lval + b)
+      where
+        (lexpr, lval) = sumConst a
+    sumConst (Add a b) = (Add lexpr rexpr, lval + rval)
+      where
+        (lexpr, lval) = sumConst a
+        (rexpr, rval) = sumConst b
