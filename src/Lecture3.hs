@@ -35,7 +35,7 @@ module Lecture3
     ) where
 
 -- VVV If you need to import libraries, do it after this line ... VVV
-
+import GHC.Enum (toEnumError, boundedEnumFrom)
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 -- $setup
@@ -60,7 +60,17 @@ of a weekday.
 >>> toShortString Monday
 "Mon"
 -}
-toShortString = error "TODO"
+toShortString :: Weekday -> String
+toShortString w =
+  case w of
+    Monday -> "Mon"
+    Tuesday -> "Tue"
+    Wednesday -> "Wed"
+    Thursday -> "Thu"
+    Friday -> "Fri"
+    Saturday -> "Sat"
+    Sunday -> "Sun"
+
 
 {- | Write a function that returns next day of the week, following the
 given day.
@@ -82,7 +92,39 @@ Tuesday
   would work for **any** enumeration type in Haskell (e.g. 'Bool',
   'Ordering') and not just 'Weekday'?
 -}
-next = error "TODO"
+
+instance Bounded Weekday where
+  minBound = Monday
+  maxBound = Sunday
+
+instance Enum Weekday where
+  toEnum :: Int -> Weekday
+  toEnum i =
+    case i of
+      0 -> Monday
+      1 -> Tuesday
+      2 -> Wednesday
+      3 -> Thursday
+      4 -> Friday
+      5 -> Saturday
+      6 -> Sunday
+      x -> toEnumError "Weekday" x (minBound :: Weekday, maxBound :: Weekday)
+
+  fromEnum :: Weekday -> Int
+  fromEnum w =
+    case w of
+      Monday -> 0
+      Tuesday -> 1
+      Wednesday -> 2
+      Thursday -> 3
+      Friday -> 4
+      Saturday -> 5
+      Sunday -> 6
+
+next :: Weekday -> Weekday
+next w = (boundedEnumFrom w ++ [minBound]) !! 1
+
+-- TODO bouns
 
 {- | Implement a function that calculates number of days from the first
 weekday to the second.
