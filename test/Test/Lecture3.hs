@@ -77,10 +77,6 @@ lecture3Spec = describe "Lecture 3" $ do
         it "Checks duplicates only for original values" $
             appendDiff3 [1] [2] [1, 2] `shouldBe` [1, 2, 1, 2]
 
-{-
-
-!!! UNCOMMENT THE FOLLOWING SECTION FOR FOLDABLE/FUNCTOR TESTS !!!
-
     describe "Laws: Foldable" $ do
         it "List1" $ do
             lawsCheck (foldableLaws genList1With) `shouldReturn` True
@@ -92,7 +88,6 @@ lecture3Spec = describe "Lecture 3" $ do
             lawsCheck (functorLaws genList1With) `shouldReturn` True
         it "Treasure" $ do
             lawsCheck (functorLaws genTreasureWith) `shouldReturn` True
--}
 
 genSmallInt :: Gen Int
 genSmallInt = Gen.int (Range.linear 0 10)
