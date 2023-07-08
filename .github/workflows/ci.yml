@@ -16,13 +16,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
+        cabal: ["3.8.1.0"]
+        ghc: ["9.2.5"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1.2
+    - uses: haskell/actions/setup@v2.3
       id: setup-haskell-cabal
       name: Setup Haskell
       with:
@@ -37,7 +37,7 @@ jobs:
       run: |
         cabal freeze
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache ~/.cabal/store
       with:
         path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
@@ -61,19 +61,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.7.3"]
-        ghc: ["8.10.7"]
+        stack: ["2.9.3"]
+        ghc: ["9.2.5"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1.2
+    - uses: haskell/actions/setup@v2.3
       name: Setup Haskell Stack
       with:
         ghc-version: ${{ matrix.ghc }}
         stack-version: ${{ matrix.stack }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache ~/.stack
       with:
         path: ~/.stack
@@ -92,18 +92,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
+        cabal: ["3.8.1.0"]
+        ghc: ["9.2.5"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v2.3
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
         cabal-version: ${{ matrix.cabal }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache ~/.cabal/store
       with:
         path: ~/.cabal/store
@@ -123,18 +123,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
+        cabal: ["3.8.1.0"]
+        ghc: ["9.2.5"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v2.3
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
         cabal-version: ${{ matrix.cabal }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache ~/.cabal/store
       with:
         path: ~/.cabal/store
@@ -159,18 +159,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
+        cabal: ["3.8.1.0"]
+        ghc: ["9.2.5"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v2.3
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
         cabal-version: ${{ matrix.cabal }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache ~/.cabal/store
       with:
         path: ~/.cabal/store
@@ -184,3 +184,29 @@ jobs:
     - name: Lecture 3 - Tests
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 3"
+
+  lecture4:
+    name: Lecture 4
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cabal: ["3.8.1.0"]
+        ghc: ["9.2.5"]
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: haskell/actions/setup@v2.3
+      name: Setup Haskell
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
+
+    - uses: actions/cache@v3
+      name: Cache ~/.cabal/store
+      with:
+        path: ~/.cabal/store
+        key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
+
+    - name: Lecture 4 - Unit Tests
+      run: |
+        cabal run exercises-test --enable-tests -- -m "Lecture 4"

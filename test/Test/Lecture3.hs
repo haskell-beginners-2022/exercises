@@ -56,6 +56,8 @@ lecture3Spec = describe "Lecture 3" $ do
     describe "List1" $ do
         it "Laws: Semigroup" $
             lawsCheck (semigroupLaws genList1) `shouldReturn` True
+        it "Includes first element of second list" $
+            List1 1  [2,3] <> List1 4 [5, 6] `shouldBe` List1 1 [2, 3, 4, 5, 6]
 
     describe "Treasure" $ do
         it "Laws: Semigroup" $
@@ -72,6 +74,8 @@ lecture3Spec = describe "Lecture 3" $ do
         it "x x z" $ appendDiff3 [1] [1] [3] `shouldBe` [1, 3]
         it "x y x" $ appendDiff3 [1] [2] [1] `shouldBe` [1, 2]
         it "x x x" $ appendDiff3 [1] [1] [1] `shouldBe` [1]
+        it "Checks duplicates only for original values" $
+            appendDiff3 [1] [2] [1, 2] `shouldBe` [1, 2, 1, 2]
 
 {-
 

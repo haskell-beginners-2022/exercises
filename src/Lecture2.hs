@@ -40,6 +40,10 @@ module Lecture2
     , constantFolding
     ) where
 
+-- VVV If you need to import libraries, do it after this line ... VVV
+
+-- ^^^ and before this line. Otherwise the test suite might fail  ^^^
+
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
 zero, you can stop calculating product and return 0 immediately.
@@ -115,24 +119,24 @@ Below is the description of the fight and character specifications:
 
   * A chest contains a non-zero amount of gold and a possible treasure.
     When defining the type of a treasure chest, you don't know what
-    treasures it stores insight, so your chest data type must be able
+    treasures it stores inside, so your chest data type must be able
     to contain any possible treasure.
-  * As a reward, knight takes all the gold, the treasure and experience.
+  * As a reward, the knight takes all the gold, the treasure and experience.
   * Experience is calculated based on the dragon type. A dragon can be
     either red, black or green.
   * Red dragons grant 100 experience points, black dragons — 150, and green — 250.
   * Stomachs of green dragons contain extreme acid and they melt any
-    treasure except gold. So green dragons has only gold as reward.
+    treasure except gold. So green dragons have only gold as reward.
     All other dragons always contain treasure in addition to gold.
-  * Knight tries to slay dragon with their sword. Each sword strike
+  * Knight tries to slay a dragon with their sword. Each sword strike
     decreases dragon health by the "sword attack" amount. When the
     dragon health becomes zero or less, a dragon dies and the knight
     takes the reward.
-  * After each 10 sword strikes, dragon breathes fire and decreases
+  * After each 10 sword strikes, the dragon breathes fire and decreases
     knight health by the amount of "dragon fire power". If the
     knight's health becomes 0 or less, the knight dies.
   * Additionally, each sword strike decreases "knight's endurance" by one.
-    If knight's endurance becomes zero, they become tired and are not
+    If a knight's endurance becomes zero, they become tired and are not
     able to continue the fight so they run away.
 
 Implement data types to describe treasure, knight and dragon.
@@ -163,12 +167,12 @@ data Knight = Knight
 dragonFight = error "TODO"
 
 ----------------------------------------------------------------------------
--- Challenges
+-- Extra Challenges
 ----------------------------------------------------------------------------
 
-{- The following exercises are considered more challenging. However,
-you still may find some of them easier than some of the previous
-ones. Difficulty is a relative concept.
+{- The following exercises are considered optional. Some of them might be more
+challenging. However, you still may find some of them easier than some of the
+previous ones. Difficulty is a relative concept.
 -}
 
 {- | Write a function that takes a list of numbers and returns 'True'
@@ -215,7 +219,7 @@ mergeSort = error "TODO"
 
 
 {- | Haskell is famous for being a superb language for implementing
-compilers and interpeters to other programming languages. In the next
+compilers and interpreters to other programming languages. In the next
 tasks, you need to implement a tiny part of a compiler.
 
 We're going to work on a small subset of arithmetic operations.

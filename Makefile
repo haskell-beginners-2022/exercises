@@ -24,3 +24,7 @@ test-lecture2:
 test-lecture3:
 	cabal test doctest-lecture3 --enable-tests --test-show-details=direct
 	cabal run exercises-test --enable-tests -- -m "Lecture 3"
+
+.PHONY: test-lecture4
+test-lecture4:
+	cabal run exercises-test --enable-tests -- -m "Lecture 4"

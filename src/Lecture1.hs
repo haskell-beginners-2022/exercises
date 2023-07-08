@@ -31,6 +31,10 @@ module Lecture1
     , lowerAndGreater
     ) where
 
+-- VVV If you need to import libraries, do it after this line ... VVV
+
+-- ^^^ and before this line. Otherwise the test suite might fail  ^^^
+
 {- | Specify the type signature of the following function. Think about
 its behaviour, possible types for the function arguments and write the
 type signature explicitly.
@@ -123,7 +127,7 @@ strSum str = sum (map read (words str))
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
-greated than the given number and strictly lower.
+greater than the given number and strictly lower.
 
 >>> lowerAndGreater 3 [1 .. 9]
 "3 is greater than 2 elements and lower than 6 elements"
