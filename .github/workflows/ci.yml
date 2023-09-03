@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       id: setup-haskell-cabal
       name: Setup Haskell
       with:
@@ -67,7 +67,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       name: Setup Haskell Stack
       with:
         ghc-version: ${{ matrix.ghc }}
@@ -97,7 +97,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
@@ -128,7 +128,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
@@ -164,7 +164,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
@@ -195,7 +195,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v2.3
+    - uses: haskell/actions/setup@v2.4
       name: Setup Haskell
       with:
         ghc-version: ${{ matrix.ghc }}
