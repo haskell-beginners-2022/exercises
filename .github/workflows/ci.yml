@@ -9,6 +9,15 @@ on:
 #    # additionally run once per week (At 00:00 on Sunday) to maintain cache
 #    - cron: '0 0 * * 0'
 
+env:
+  # Tracks whether this is a push or pull request to the main branch
+  # of the main course repository, so that we can pass the workflow
+  # when making correct changes to the main repository while still
+  # failing it in the lecture tests with forked repositories.
+  is_main_repo:
+    ${{ github.repository == 'haskell-beginners-2022/exercises' &&
+        (github.ref_name == 'main' || github.base_ref == 'main') }}
+
 jobs:
   cabal:
     name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
@@ -110,13 +119,25 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
 
     - name: Lecture 1 - Doctest
-      continue-on-error: true
+      id: doctest
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal test doctest-lecture1 --enable-tests --test-show-details=direct
 
     - name: Lecture 1 - Tests
+      id: tests
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 1"
+
+    - name: Confirm that lecture tests fail
+      if: |
+        env.is_main_repo == 'true' &&
+        (steps.doctest.outcome != 'failure' || steps.tests.outcome != 'failure')
+      run: |
+        echo "This is for the main branch of the course repository."
+        echo "Tests did not fail when they should have."
+        exit 1
 
   lecture2:
     name: Lecture 2
@@ -141,18 +162,33 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
 
     - name: Lecture 2 - Doctest
-      continue-on-error: true
+      id: doctest
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal test doctest-lecture2 --enable-tests --test-show-details=direct
 
     - name: Lecture 2 - Tests (Normal)
+      id: tests-normal
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 2/Normal"
 
     - name: Lecture 2 - Tests (Hard)
+      id: tests-hard
       continue-on-error: true
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 2/Hard"
+
+    - name: Confirm that lecture tests fail
+      if: |
+        env.is_main_repo == 'true' &&
+        (steps.doctest.outcome != 'failure' ||
+         steps.tests-normal.outcome != 'failure' ||
+         steps.tests-hard.outcome != 'failure')
+      run: |
+        echo "This is for the main branch of the course repository."
+        echo "Tests did not fail when they should have."
+        exit 1
 
   lecture3:
     name: Lecture 3
@@ -177,13 +213,25 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
 
     - name: Lecture 3 - Doctest
-      continue-on-error: true
+      id: doctest
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal test doctest-lecture3 --enable-tests --test-show-details=direct
 
     - name: Lecture 3 - Tests
+      id: tests
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 3"
+
+    - name: Confirm that lecture tests fail
+      if: |
+        env.is_main_repo == 'true' &&
+        (steps.doctest.outcome != 'failure' || steps.tests.outcome != 'failure')
+      run: |
+        echo "This is for the main branch of the course repository."
+        echo "Tests did not fail when they should have."
+        exit 1
 
   lecture4:
     name: Lecture 4
@@ -208,5 +256,14 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
 
     - name: Lecture 4 - Unit Tests
+      id: tests
+      continue-on-error: ${{ env.is_main_repo == 'true' }}
       run: |
         cabal run exercises-test --enable-tests -- -m "Lecture 4"
+
+    - name: Confirm that lecture tests fail
+      if: env.is_main_repo == 'true' && steps.tests.outcome != 'failure'
+      run: |
+        echo "This is for the main branch of the course repository."
+        echo "Tests did not fail when they should have."
+        exit 1
