@@ -21,7 +21,7 @@ source-repository head
   location:            https://github.com/haskell-beginners-2022/exercises.git
 
 common common-options
-  build-depends:       base >= 4.14 && < 4.17
+  build-depends:       base >= 4.14
 
   ghc-options:         -Wall
                        -Wcompat
