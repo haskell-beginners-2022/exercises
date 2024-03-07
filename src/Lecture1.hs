@@ -54,7 +54,8 @@ Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-sumOfSquares x y = error "TODO!"
+sumOfSquares :: Integer -> Integer -> Integer
+sumOfSquares x y = (x^2) + (y^2)
 
 {- | Implement a function that returns the last digit of a given number.
 
@@ -67,7 +68,8 @@ sumOfSquares x y = error "TODO!"
 
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-lastDigit n = error "lastDigit: Not implemented!"
+lastDigit :: Integer -> Integer
+lastDigit n = n `mod` 10
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
@@ -81,7 +83,8 @@ and 1 is the smallest, and 7 - 1 = 6.
 Try to use local variables (either let-in or where) to implement this
 function.
 -}
-minmax x y z = error "TODO"
+minmax :: Integer -> Integer -> Integer -> Integer
+minmax x y z = maximum [x,y,z] - minimum [x,y,z]
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
@@ -98,7 +101,12 @@ start position can be considered as zero (e.g. substring from the
 first character) and negative end position should result in an empty
 string.
 -}
-subString start end str = error "TODO"
+subString :: Int -> Int -> String -> String
+subString start end str
+    | start < 0 = subString 0 end str
+    | end < 0   = ""
+    | otherwise = (take end . drop start) str
+
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.
@@ -108,7 +116,8 @@ and finds a sum of the numbers inside this string.
 
 The string contains only spaces and/or numbers.
 -}
-strSum str = error "TODO"
+strSum :: String -> Int
+strSum = sum . map read . words
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
@@ -121,6 +130,10 @@ Explanation: the list [1 .. 9] contains 9 elements: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 The given number 3 is greater than 2 elements (1 and 2)
 and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 
-🕯 HINT: Use recursion to implement this function.
+🕯 HINT: Use recursion to implement this function. hint: no
 -}
-lowerAndGreater n list = error "TODO"
+lowerAndGreater :: Int -> [Int] -> String
+lowerAndGreater n list = show n ++ "Is greater than " ++ show greater ++ " elements and lower than " ++ show (length list - greater) ++ " elements."
+    where
+        greater = length $ filter (<n) list
+
